@@ -98,16 +98,29 @@ def parse_transaction_line(line: str, plaza_no: str = "000"):
     if len(line.strip()) < 10:
         return None, False
 
-    match = re.match(r'^(\d+)', line)
-    if not match:
-        return None, False
-    trx_no = match.group(1)
-
+    # 1️⃣ Cari tarikh & masa dulu
     dt_match = re.search(r'(\d{1,2}/\d{2}/\d{4})\s+(\d{1,2}:\d{2}(?::\d{2})?)', line)
     if not dt_match:
         return None, False
+
     date_part = dt_match.group(1)
     time_part = dt_match.group(2)
+
+    if len(time_part.split(":")) == 2:
+        time_part += ":00"
+
+    date_time = f"{date_part} {time_part}"
+
+    # 2️⃣ Ambil semua digit sebelum tarikh sebagai TrxNo
+    before_date = line[:dt_match.start()].strip()
+
+    trx_match = re.match(r'^\d+', before_date)
+    if not trx_match:
+        return None, False
+
+    trx_no = trx_match.group(0)
+
+
     if len(time_part.split(":")) == 2:
         time_part += ":00"
     date_time = f"{date_part} {time_part}"
@@ -634,7 +647,7 @@ async def upload_pdf(files: list[UploadFile] = File(...), preview: bool = Query(
 
         # 🔴 Assign ID baru
         with engine.begin() as conn:
-            result = conn.execute(text("SELECT COALESCE(MAX(id), 0) FROM public.sde22_duplicate"))
+            result = conn.execute(text("SELECT COALESCE(MAX(id), 0) FROM public.sde22"))
             current_max_id = result.scalar()
 
         df = df.copy()
@@ -651,7 +664,7 @@ async def upload_pdf(files: list[UploadFile] = File(...), preview: bool = Query(
 
 
         # 🔴 INSERT SEMUA
-        df.to_sql("sde22_duplicate", engine, schema="public", if_exists="append", index=False)
+        df.to_sql("sde22", engine, schema="public", if_exists="append", index=False)
 
         # ✅ DEDUPLICATION + KIRA BILANGAN
         with engine.begin() as conn:
@@ -666,9 +679,9 @@ async def upload_pdf(files: list[UploadFile] = File(...), preview: bool = Query(
                                             "Code", "Remark", "PenaltyCode", "LaneNo", "JobNo", "CardNo"
                                ORDER BY id
                            ) AS rn
-                    FROM public.sde22_duplicate
+                    FROM public.sde22
                 )
-                DELETE FROM public.sde22_duplicate
+                DELETE FROM public.sde22
                 WHERE id IN (SELECT id FROM duplicates WHERE rn > 1)
                 RETURNING id;
             """))
@@ -893,16 +906,17 @@ async def entry_pdf(files: list[UploadFile] = File(...), preview: bool = Query(F
 
 @app.post("/refresh-payment-summary")
 async def refresh_payment_summary():
+
     try:
-        with engine.begin() as conn:
-            # refresh per plaza (CSC + ABT)
+        with engine.connect() as conn:
             conn.execute(text("REFRESH MATERIALIZED VIEW public.date_payment_summary_cashless_per_plaza;"))
 
-            # refresh with jobs (lama / semua modes)
+        with engine.connect() as conn:
             conn.execute(text("REFRESH MATERIALIZED VIEW public.date_payment_summary_with_jobs;"))
 
-            # refresh ENTRY CSC
+        with engine.connect() as conn:
             conn.execute(text("REFRESH MATERIALIZED VIEW public.date_payment_summary_entrycsc;"))
+
 
 
         return {"status": "success", "message": "Both materialized views refreshed"}

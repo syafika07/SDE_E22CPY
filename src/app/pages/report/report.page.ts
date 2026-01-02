@@ -25,9 +25,7 @@ Chart.register(...registerables, ChartDataLabels);
   standalone: true,
   imports: [
     CommonModule, FormsModule,
-    IonContent, IonButton,
-    IonDatetime, IonDatetimeButton,
-    IonModal, IonIcon, IonNote,
+    IonContent, IonButton, IonIcon, IonNote,
     LoadingProgressComponent
 ],
   providers: [DatePipe]
@@ -207,8 +205,8 @@ async reloadAll() {
   // ---------------- Summary ----------------
   loadSummary(): Promise<void> {
     return new Promise(resolve => {
-      this.http.get<any>('http://localhost:8000/summary', { params: this.buildParams() })
-      //this.http.get<any>('https://sde22-1.onrender.com/summary', { params: this.buildParams() })
+      //this.http.get<any>('http://localhost:8000/summary', { params: this.buildParams() })
+      this.http.get<any>('https://sde22-1.onrender.com/summary', { params: this.buildParams() })
           .subscribe(res => {
           if (res.status === 'success') {
             this.totalTraffic = res.totalTraffic;
@@ -222,8 +220,8 @@ async reloadAll() {
   // ---------------- Plaza Donut ----------------
   loadPlazaDonut(): Promise<void> {
     return new Promise(resolve => {
-      this.http.get<any>('http://localhost:8000/trx-per-plaza', { params: this.buildParams() })
-      //this.http.get<any>('https://sde22-1.onrender.com/trx-per-plaza', { params: this.buildParams() })
+      //this.http.get<any>('http://localhost:8000/trx-per-plaza', { params: this.buildParams() })
+      this.http.get<any>('https://sde22-1.onrender.com/trx-per-plaza', { params: this.buildParams() })
 
         .subscribe(res => {
           if (res.status === 'success') {
@@ -284,8 +282,8 @@ renderPlazaDonut(labels: string[], data: number[]) {
   // ---------------- Payment Donut ----------------
   loadPaymentDonut(): Promise<void> {
     return new Promise(resolve => {
-      this.http.get<any>('http://localhost:8000/trx-by-payment-mode', { params: this.buildParams() })
-      //this.http.get<any>('https://sde22-1.onrender.com/trx-by-payment-mode', { params: this.buildParams() })
+      //this.http.get<any>('http://localhost:8000/trx-by-payment-mode', { params: this.buildParams() })
+      this.http.get<any>('https://sde22-1.onrender.com/trx-by-payment-mode', { params: this.buildParams() })
 
         .subscribe(res => {
           if (res.status === 'success') {
@@ -364,8 +362,8 @@ renderPaymentDonut(labels: string[], data: number[]) {
   // ---------------- Plaza Bar ----------------
   loadPlazaBar(): Promise<void> {
     return new Promise(resolve => {
-      this.http.get<any>('http://localhost:8000/trx-by-plaza-bar', { params: this.buildParams() })
-      //this.http.get<any>('https://sde22-1.onrender.com/trx-by-plaza-bar', { params: this.buildParams() })
+      //this.http.get<any>('http://localhost:8000/trx-by-plaza-bar', { params: this.buildParams() })
+      this.http.get<any>('https://sde22-1.onrender.com/trx-by-plaza-bar', { params: this.buildParams() })
         .subscribe(res => {
           if (res.status === 'success') {
             const labels = res.chart_bar.map((x: any) => x.PlazaNo);
@@ -461,8 +459,8 @@ renderPaymentDonut(labels: string[], data: number[]) {
   // ---------------- Class Bar ----------------
   loadClassBar(): Promise<void> {
     return new Promise(resolve => {
-      this.http.get<any>('http://localhost:8000/trx-by-class', { params: this.buildParams() })
-      //this.http.get<any>('https://sde22-1.onrender.com/trx-by-class', { params: this.buildParams() })
+      //this.http.get<any>('http://localhost:8000/trx-by-class', { params: this.buildParams() })
+      this.http.get<any>('https://sde22-1.onrender.com/trx-by-class', { params: this.buildParams() })
         .subscribe(res => {
           if (res.status === 'success') {
             const labels = res.chart_class.map((x: any) => `Class ${x.Trx}`);
@@ -518,8 +516,8 @@ renderPaymentDonut(labels: string[], data: number[]) {
   // ---------------- Segment 1 & 2 (Total Entry & Exit) ----------------
 loadSegmentTraffic(): Promise<void> {
   return new Promise(resolve => {
-    //this.http.get<any>('https://sde22-1.onrender.com/segment1-2', { params: this.buildParams() })
-    this.http.get<any>('http://localhost:8000/segment1-2', { params: this.buildParams() })
+    this.http.get<any>('https://sde22-1.onrender.com/segment1-2', { params: this.buildParams() })
+    //this.http.get<any>('http://localhost:8000/segment1-2', { params: this.buildParams() })
       .subscribe({
         next: (res) => {
           if (res.status === 'success') {
@@ -542,8 +540,8 @@ loadSegmentTraffic(): Promise<void> {
 loadSegment3Traffic(): Promise<void> {
   return new Promise(resolve => {
 
-    //this.http.get<any>('https://sde22-1.onrender.com/segment3', {params: this.buildParams()}).subscribe({
-    this.http.get<any>('http://localhost:8000/segment3', {params: this.buildParams()}).subscribe({
+    this.http.get<any>('https://sde22-1.onrender.com/segment3', {params: this.buildParams()}).subscribe({
+    //this.http.get<any>('http://localhost:8000/segment3', {params: this.buildParams()}).subscribe({
 
 
       next: (res) => {
@@ -572,8 +570,8 @@ loadSegment3Traffic(): Promise<void> {
 
 loadSegment4Traffic(): Promise<void> {
   return new Promise(resolve => {
-    //this.http.get<any>('https://sde22-1.onrender.com/segment4', { params: this.buildParams() })
-    this.http.get<any>('http://localhost:8000/segment4', { params: this.buildParams() })
+    this.http.get<any>('https://sde22-1.onrender.com/segment4', { params: this.buildParams() })
+    //this.http.get<any>('http://localhost:8000/segment4', { params: this.buildParams() })
       .subscribe({
         next: (res) => {
           if (res.status === 'success') {
@@ -593,8 +591,8 @@ loadSegment4Traffic(): Promise<void> {
 //---------------segemnt 5-6----------------
 loadSegment6Traffic(): Promise<void> {
   return new Promise(resolve => {
-    //this.http.get<any>('https://sde22-1.onrender.com/segment6', { params: this.buildParams() })
-    this.http.get<any>('http://localhost:8000/segment6', { params: this.buildParams() })
+    this.http.get<any>('https://sde22-1.onrender.com/segment6', { params: this.buildParams() })
+    //this.http.get<any>('http://localhost:8000/segment6', { params: this.buildParams() })
       .subscribe({
         next: (res) => {
           if (res.status === 'success') {

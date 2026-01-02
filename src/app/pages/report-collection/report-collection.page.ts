@@ -23,10 +23,9 @@ Chart.register(...registerables, ChartDataLabels);
   templateUrl: './report-collection.page.html',
   styleUrls: ['./report-collection.page.scss'],
   standalone: true,
-  imports: [IonModal, IonDatetimeButton, IonIcon, IonNote,
+  imports: [IonIcon, IonNote,
     CommonModule, FormsModule,
     IonContent, IonButton,
-    IonDatetime,
     LoadingProgressComponent],
   providers: [DatePipe]
 })
