@@ -1,0 +1,13 @@
+@if (show) {
+  <div class="loading-overlay">
+    <!-- Spinner -->
+    <ion-spinner name="crescent"></ion-spinner>
+    <!-- Phase & Message (opsional, tapi disyorkan) -->
+    <p class="phase">{{ phase }}</p>
+    <p class="message">{{ message }} ({{ progress | number:'1.0-0' }}%)</p>
+    <!-- Progress bar -->
+    <div class="progress-container">
+      <div class="progress-bar" [style.width.%]="progress"></div>
+    </div>
+  </div>
+}

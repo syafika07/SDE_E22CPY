@@ -1,0 +1,145 @@
+<app-loading-progress [show]="loading" [progress]="loadingProgress" [message]="'Loading charts...'" [phase]="'Fetching data'"> </app-loading-progress>
+<ion-content class="dashboard-container dark-theme">
+  <div class="content-wrapper">
+
+    <!-- ================= HEADER SECTION ================= -->
+    <header class="main-header">
+      <div class="header-left">
+        <div class="brand-section">
+          <div class="logo-box">
+            <img src="assets/icon/SDE.png" class="company-logo" alt="Logo">
+          </div>
+          <div class="brand-text">
+            <h1 class="dashboard-title">Daily Report</h1>
+            <ion-note class="sub-title">By Traffic At {{ latestDateMinusOne }}</ion-note>
+          </div>
+        </div>
+
+        <div class="nav-toggle">
+          <!-- Active class added based on logic; assuming Traffic is default for this page -->
+          <button class="toggle-btn active" (click)="navigate('REPORT')">
+            <ion-icon [icon]="carOutline"></ion-icon> Traffic
+          </button>
+          <button class="toggle-btn" (click)="navigate('REPORT_COLLECTION')">
+            <ion-icon [icon]="cashOutline"></ion-icon> Collections
+          </button>
+        </div>
+      </div>
+
+      <div class="filter-toolbar">
+        <div class="date-inputs">
+          <div class="input-group">
+            <span class="label">Start Date</span>
+            <ion-datetime-button datetime="start-date"></ion-datetime-button>
+            <ion-modal [keepContentsMounted]="true">
+              <ng-template>
+                <ion-datetime id="start-date" presentation="date" [(ngModel)]="startDate"></ion-datetime>
+              </ng-template>
+            </ion-modal>
+          </div>
+          <div class="input-group">
+            <span class="label">End Date</span>
+            <ion-datetime-button datetime="end-date"></ion-datetime-button>
+            <ion-modal [keepContentsMounted]="true">
+              <ng-template>
+                <ion-datetime id="end-date" presentation="date" [(ngModel)]="endDate"></ion-datetime>
+              </ng-template>
+            </ion-modal>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <ion-button (click)="reloadAll()" class="btn-primary" fill="solid">Apply Filters</ion-button>
+          <ion-button color="medium" fill="clear" (click)="resetFilter()" class="btn-reset">Reset</ion-button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ================= PRIMARY SCORECARDS ================= -->
+    <div class="primary-kpis">
+      <div class="kpi-card large blue-gradient">
+        <div class="kpi-content">
+          <span class="kpi-label">Total Traffic</span>
+          <div class="kpi-value">{{ totalTraffic | number }} <span class="unit">Veh</span></div>
+        </div>
+        <div class="kpi-icon-bg">
+          <ion-icon [icon]="carSportSharp"></ion-icon>
+        </div>
+      </div>
+
+      <div class="kpi-card large dark-card">
+        <div class="kpi-content">
+          <span class="kpi-label">Total Collection</span>
+          <div class="kpi-value">{{ totalPaidAmount | currency:'RM':'symbol':'1.2-2' }}</div>
+        </div>
+        <div class="kpi-icon-bg light">
+          <ion-icon [icon]="cashSharp"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= 9 SEGMENTED SCORECARDS ================= -->
+<div class="segments-grid">
+  <div class="segment-card" *ngFor="let key of segmentOrder">
+    <span class="seg-label">{{ segmentLabelMap[key] }}</span>
+    <div class="seg-value-row">
+      <span class="seg-value">
+        {{ segmentValues[key] !== undefined ? (segmentValues[key] | number) : '--' }}
+      </span>
+      <span class="seg-status">Live</span>
+    </div>
+    <div class="seg-progress-bg">
+      <div class="seg-progress-bar"
+           [style.width.%]="getProgressWidth(segmentValues[key])">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+    <!-- ================= CHART GRID ================= -->
+    <div class="charts-grid">
+      <!-- Card 1: Plaza Donut -->
+      <div class="chart-container">
+        <div class="chart-header">
+          <h3 class="chart-title">Traffic by Plaza (%)</h3>
+        </div>
+        <div class="chart-body">
+          <canvas #trxDonutChart id="trxDonutChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Card 2: Payment Mode Donut -->
+      <div class="chart-container">
+        <div class="chart-header">
+          <h3 class="chart-title">Traffic by Payment Mode (Veh)</h3>
+        </div>
+        <div class="chart-body">
+          <canvas #paymentModeChart id="paymentModeChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Card 3: Plaza Bar -->
+      <div class="chart-container">
+        <div class="chart-header">
+          <h3 class="chart-title">Traffic Volume by Plaza (Veh)</h3>
+        </div>
+        <div class="chart-body">
+          <canvas #plazaBarChart id="plazaBarChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Card 4: Class Bar -->
+      <div class="chart-container">
+        <div class="chart-header">
+          <h3 class="chart-title">Traffic by Transaction Class (Veh)</h3>
+        </div>
+        <div class="chart-body">
+          <canvas #trxClassBarChart id="trxClassBarChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</ion-content>

@@ -1,0 +1,580 @@
+ion-content {
+  --background: linear-gradient(145deg, #ffffff, #f8f9fa, #ffffff);
+  color: #1a202c;
+  font-family: 'Inter', system-ui, sans-serif;
+  padding: 10px;
+}
+
+/* ===== FILTER CARD ===== */
+.filter-card {
+  background: transparent !important;  /* fully transparent */
+  border: none !important;             /* remove border */
+  box-shadow: none !important;         /* remove shadow */
+  backdrop-filter: none !important;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Header & content transparent */
+.filter-card ion-card-header,
+.filter-card ion-card-content {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* ===== FILTER ITEMS WITH SUBTLE SHADOW ===== */
+.filter-column ion-item,
+.filter-card ion-item {
+  background: rgba(0, 0, 0, 0.05); /* light translucent */
+  border-radius: 8px;
+  box-shadow: 2px 3px 10px rgba(0,0,0,0.1); /* shadow lebih kecil */
+  padding: 6px 8px;
+  font-size: 0.85rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Hover effect untuk filter items */
+.filter-column ion-item:hover,
+.filter-card ion-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 3px 4px 14px rgba(0,0,0,0.15); /* hover lebih subtle */
+}
+
+
+/* ===== CALENDAR (DATE GROUP) ===== */
+.date-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+ion-datetime {
+  --padding-start: 2px;
+  --padding-end: 2px;
+  --padding-top: 1px;
+  --padding-bottom: 1px;
+  --min-height: 28px;
+  --height: 28px;
+  font-size: 0.85rem;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 6px;
+  background: rgba(0,0,0,0.02);
+  color: #1a202c;
+  text-align: center;
+  width: auto;
+  margin: 0 auto;
+}
+
+ion-label[position='stacked'] {
+  font-size: 1.5rem;
+  color: #2d3748;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+/* ===== FILTER + CALENDAR GRID ===== */
+.filter-grid {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Calendar card */
+.calendar-card {
+  flex: 0 0 50%; /* separuh lebar filter */
+  background: rgba(0,0,0,0.03);
+  border-radius: 8px;
+  padding: 8px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Hover calendar card */
+.calendar-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 6px 8px 24px rgba(0,0,0,0.15);
+}
+
+/* Filter card inside grid */
+.filter-card {
+  flex: 1 1 auto;
+}
+
+/* Horizontal layout for filter + calendar */
+.filter-container {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+/* Responsive: mobile stack */
+@media (max-width: 900px) {
+  .filter-container {
+    flex-direction: column;
+  }
+  .calendar-card,
+  .filter-card {
+    flex: 1 1 100%;
+  }
+}
+
+/* ===== ION ITEM GLOBAL ===== */
+ion-item {
+  --background: transparent;
+  min-width: 100px;
+  --color: #1a202c;
+}
+
+/* ===== BUTTON ===== */
+ion-button {
+  height: 32px;
+  font-size: 0.8rem;
+  margin-top: 4px;
+  --border-radius: 6px;
+}
+
+/* ===== SUMMARY ===== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px,1fr));
+  gap: 6px;
+  margin: 10px 0;
+}
+
+/* Stats card */
+.stat-card {
+  background: rgba(0,0,0,0.04);
+  border-radius: 8px;
+  text-align: center;
+  padding: 6px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stat-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 4px 6px 18px rgba(0,0,0,0.15);
+}
+
+.stat-card h2 {
+  font-size: 0.9rem;
+  color: #0084ff;
+  margin: 4px 0;
+}
+
+/* ===== DASHBOARD GRID ===== */
+.dashboard-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+@media (max-width: 900px) {
+  .dashboard-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== CHART CARDS ===== */
+.chart-card {
+  background: rgba(0,0,0,0.03);
+  border-radius: 10px;
+  padding: 8px;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.chart-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 6px 8px 24px rgba(0,0,0,0.15);
+}
+
+.chart-card canvas {
+  max-height: 180px;
+  width: 100%;
+}
+
+/* ===== TABLE special ===== */
+
+.table-card-special {
+  background: rgba(0,0,0,0.03);
+  border-radius: 10px;
+  padding: 8px;
+  overflow-x: auto;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 6px 8px 24px rgba(0,0,0,0.15);
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.65rem; /* lebih kecil dari asal */
+    text-align: center;
+  }
+
+  th, td {
+    padding: 4px 3px;
+    border: 1px solid rgba(0,0,0,0.1); /* garisan penuh */
+    text-align: center;
+    vertical-align: middle;
+  }
+
+th {
+  color: #2d3748;                   /* slightly darker than body text, but not harsh */
+  background-color: hsl(0, 0%, 85%);        /* light gray — clean, accessible, subtle */
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  padding: 6px 4px;
+  border: 1px solid rgba(0,0,0,0.08); /* subtle border for definition */
+  text-align: center;
+  vertical-align: middle;
+}
+
+  tr:hover {
+    background: rgba(0,0,0,0.05);
+  }
+
+  .no-data {
+    text-align: center;
+    opacity: 0.6;
+  }
+}
+
+/* ===== TABLE ===== */
+.table-card {
+  background: rgba(0,0,0,0.03);
+  border-radius: 10px;
+  padding: 8px;
+  overflow-x: auto;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.table-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 6px 8px 24px rgba(0,0,0,0.15);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+th, td {
+  padding: 6px 4px;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  text-align: center;
+  vertical-align: middle;
+  color: #2d3748;
+}
+
+
+th {
+  background-color: hwb(0 88% 12%);        /* light gray — clean, accessible, subtle */
+  color: #1a202c;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+tr:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.no-data {
+  text-align: center;
+  opacity: 0.6;
+}
+
+/* ===== LOADING OVERLAY ===== */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255,255,255,0.9);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  color: #1a202c;
+  font-size: 1rem;
+}
+
+ion-toggle {
+  zoom: 0.9;
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
+.table-scroll {
+  max-height: 400px;
+  overflow-y: auto;
+    scrollbar-width: none;     /* Firefox */
+  -ms-overflow-style: none;  /* IE 10+ */
+}
+.table-scroll::-webkit-scrollbar {
+  display: none;             /* Chrome, Safari, Edge */
+}
+.pagination-footer-right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 12px;
+}
+
+.page-info {
+  font-size: 12px;
+  color: #718096;
+}
+
+.text-button {
+  --color: #718096;
+  --background: transparent;
+  --padding-start: 0;
+  --padding-end: 0;
+  font-size: 12px;
+}
+
+.text-button:disabled {
+  --color: #a0aec0;
+}
+.table-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 8px;
+}
+
+.table-filter-dropdowns {
+  display: flex;
+  gap: 8px;
+  align-items: center;  /* pastikan semua items center vertical */
+  flex-wrap: wrap; /* tambah ni */
+  justify-content: flex-end; /* pastikan dropdown di kanan */
+
+
+}
+
+.filter-item {
+  display: flex;
+  flex-direction: column; /* label atas, select bawah */
+  flex: 0 0 auto; /* jangan grow, pakai width tetap */
+  min-width: 120px;
+  width: 200px;   /* saiz dropdown */
+}
+
+.filter-item ion-select {
+  height: 36px;           /* ketinggian tetap */
+  --border-radius: 12px;  /* bulat */
+  --padding-start: 10px;  /* padding kiri */
+  --padding-end: 10px;    /* padding kanan */
+  display: flex;           /* paksa flex layout */
+  align-items: center;     /* center icon & text */
+}
+.button-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.button-row ion-button {
+  flex: 1; /* bagi dua butang sama besar */
+}
+
+/* ===== Apply Button (Green) ===== */
+.apply {
+  --background: #16a34a;      /* Green */
+  --background-hover: #15803d;
+  --background-focused: #166534;
+  --color: #fff;
+  --border-radius: 10px;
+  --padding-start: 20px;
+  --padding-end: 20px;
+  --box-shadow: 0 4px 10px rgba(22, 163, 74, 0.25);
+  font-weight: 600;
+}
+
+.apply:hover {
+  filter: brightness(1.05);
+}
+
+/* ===== Download Button (Blue) ===== */
+.dwn {
+  --background: #2563eb;     /* Blue */
+  --background-hover: #1d4ed8;
+  --background-focused: #1e40af;
+  --color: #fff;
+  --border-radius: 10px;
+  --padding-start: 20px;
+  --padding-end: 20px;
+  --box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+  font-weight: 600;
+}
+
+/* Disabled State (Auto for isDownloadingPDF) */
+.dwn[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  filter: grayscale(0.3);
+}
+
+.dwn:hover:not([disabled]) {
+  filter: brightness(1.05);
+}
+
+/* ===== RESPONSIVE MEDIA QUERIES ===== */
+
+/* Mobile (default) < 768px */
+/* CSS sedia ada dah sesuai untuk mobile */
+@media (max-width: 767px) {
+  .table-header-flex {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .table-filter-dropdowns {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .filter-item {
+    width: 100%;
+  }
+}
+
+
+/* Tablet: 768px - 1024px */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .filter-item {
+    width: 180px;
+  }
+  .data-table, .table-card, .table-card-special {
+    font-size: 0.75rem;
+  }
+  ion-card-title, .page-title {
+    font-size: 1.6rem;
+  }
+  .chart-card canvas {
+    max-height: 200px;
+  }
+  .center-container {
+    margin: 30px auto;
+    max-width: 720px;
+  }
+}
+
+/* Desktop: 1025px - 1920px */
+@media (min-width: 1025px) and (max-width: 1920px) {
+  .filter-item {
+    width: 220px;
+  }
+  .data-table, .table-card, .table-card-special {
+    font-size: 0.85rem;
+  }
+  ion-card-title, .page-title {
+    font-size: 1.8rem;
+  }
+  .chart-card canvas {
+    max-height: 240px;
+  }
+  .center-container {
+    margin: 40px auto;
+    max-width: 900px;
+  }
+}
+
+/* TV / Ultra Large Screen: >1920px */
+@media (min-width: 1921px) {
+  .filter-item {
+    width: 280px;
+  }
+  .data-table, .table-card, .table-card-special {
+    font-size: 0.95rem;
+  }
+  ion-card-title, .page-title {
+    font-size: 2.2rem;
+  }
+  .chart-card canvas {
+    max-height: 300px;
+  }
+  .center-container {
+    margin: 60px auto;
+    max-width: 1200px;
+  }
+  .button-row ion-button {
+    font-size: 1rem;
+    height: 42px;
+  }
+.payment-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 4px !important;
+}
+
+.select-all-wrapper {
+  display: flex !important;
+  align-items: center !important;
+  gap: 2px !important;
+}
+
+.payment-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+}
+
+.payment-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.pm-label, .select-all-label {
+  font-size: 0.85rem !important;
+}
+
+
+}
+ion-card-title {
+  color: #1a1a1a !important; /* warna gelap */
+  font-weight: 600;
+}
+
+.btn-icon {
+  width: 18px;       /* saiz icon */
+  height: 18px;
+  margin-right: 6px; /* jarak icon dan text */
+  vertical-align: middle;
+}
+.btn-icon-right {
+  width: 28px;       /* saiz icon */
+  height: 28px;
+  margin-left: 6px;  /* jarak text dan icon */
+  vertical-align: middle;
+}
+.payment-item.placeholder {
+  opacity: 0.6;
+  font-style: italic;
+  padding: 8px 0;
+  color: #0084ff;
+}

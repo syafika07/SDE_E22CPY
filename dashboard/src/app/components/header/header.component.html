@@ -1,0 +1,52 @@
+<ion-header>
+  <ion-toolbar>
+    <div class="header-left">
+      <ion-menu-button></ion-menu-button>
+      <div class="logo-container">
+        <img src="assets/SDE.png" alt="Logo" class="toolbar-logo">
+        <span class="toolbar-title">{{ pageTitle }}</span>
+      </div>
+    </div>
+
+    <ion-buttons slot="primary" class="nav-buttons">
+      <ion-button
+        fill="clear"
+        size="small"
+        [routerLink]="'/dashboard'"
+        routerLinkActive="active"
+        class="nav-btn">
+        Home
+      </ion-button>
+
+      <ion-button
+        fill="clear"
+        size="small"
+        [routerLink]="'/tngc'"
+        routerLinkActive="active"
+        class="nav-btn">
+        RFID/ABTC
+      </ion-button>
+
+      <!-- Show Upload button only for admin/proadmin -->
+      <ion-button
+        *ngIf="userRole === 'admin' || userRole === 'proadmin'"
+        fill="clear"
+        size="small"
+        [routerLink]="'/upload-data'"
+        routerLinkActive="active"
+        class="nav-btn upload-btn">
+        Upload
+      </ion-button>
+    </ion-buttons>
+
+    <ion-buttons slot="end" class="user-actions">
+      <div class="user-info-inline">
+        <div class="user-name">{{ userName }}</div>
+        <div class="user-role">{{ displayRole }}</div>
+      </div>
+      <ion-button fill="clear" size="small" (click)="logout()" class="logout-btn">
+        <img src="assets/logout.png" alt="Logout" class="logout-icon">
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>

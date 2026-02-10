@@ -1,0 +1,36 @@
+<ion-menu contentId="main-content" type="overlay" side="start" backdropDismiss="true" swipeGesture="true"   [swipeGesture]="canSwipe">
+
+  <ion-header>
+    <ion-toolbar>
+      <div class="menu-header">
+        <img src="assets/SDE-22.png" alt="Logo" class="menu-logo">
+        <span class="menu-title">Menu</span>
+      </div>
+    </ion-toolbar>
+
+    <div class="user-info">
+      <span class="user-name">{{ displayName }}</span>
+      <div class="user-email">{{ user.email }}</div>
+      <div class="user-role">{{ displayRole }}</div>
+      <div class="user-clock">
+        <span>{{ currentTime }}</span>
+      </div>
+    </div>
+  </ion-header>
+
+  <ion-content>
+    <ion-list>
+      @for (item of filteredMenuItems; track item) {
+        <ion-menu-toggle auto-hide="false">
+          <ion-item
+            [routerLink]="item.url"
+            (click)="item.title === 'Logout' ? logout() : setActive(item.url)"
+            [class.active]="activeUrl === item.url"
+            class="menu-item">
+            <ion-label>{{ item.title }}</ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+      }
+    </ion-list>
+  </ion-content>
+</ion-menu>

@@ -1,0 +1,1271 @@
+/* ================= GLOBAL STYLES ================= */
+.tools {
+  --background: #ffffff; /* putih */
+  --color: #000000;      /* teks hitam (untuk ion components) */
+  color: #000000;        /* fallback kalau tak guna variable Ionic */
+}
+
+/* ================= PAGE BACKGROUND ================= */
+.background {
+  --background: linear-gradient(145deg, #0f2027, #203a43, #2c5364);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100%;
+}
+
+/* ================= PAGE TITLE ================= */
+.page-title {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #ffffff;
+  text-align: center;
+}
+
+/* ================= CENTER CONTAINER ================= */
+.center-container {
+  width: 100%;
+  max-width: 500px;
+  margin: 40px auto;
+}
+
+/* ================= UPLOAD CARD ================= */
+.upload-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  color: #fff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 10px;
+}
+
+.upload-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* ================= CARD TITLE / SUBTITLE ================= */
+ion-card-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+ion-card-subtitle {
+  color: #a0aec0;
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+/* ================= FILE INPUT ================= */
+.file-section {
+  margin-top: 16px;
+}
+
+.file-section input[type='file'] {
+  width: 100%;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #e2e8f0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.file-section input[type='file']:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.file-section ion-button {
+  margin-top: 20px;
+  font-weight: 500;
+  text-transform: none;
+  padding: 10px 16px;
+}
+
+/* ================= STATUS SECTION ================= */
+.status-section {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.status-section ion-text p {
+  color: #a0aec0;
+  font-size: 0.95rem;
+}
+
+.status-section ion-spinner {
+  margin: 12px auto;
+  display: block;
+}
+
+/* ================= DASHBOARD LINK ================= */
+.dashboard-section {
+  margin-top: 24px;
+}
+
+.dashboard-section ion-item {
+  --background: transparent;
+  color: #e2e8f0;
+}
+
+.dashboard-section ion-button {
+  font-weight: 500;
+  text-transform: none;
+  padding: 8px 14px;
+}
+
+/* ================= ANIMATIONS ================= */
+.animate-fade {
+  animation: fadeIn 0.7s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================= RESPONSIVE MEDIA QUERIES ================= */
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .center-container {
+    margin: 20px auto;
+    padding: 0 10px;
+  }
+
+  ion-card-title {
+    font-size: 1.2rem;
+  }
+
+  ion-card-subtitle {
+    font-size: 0.8rem;
+  }
+
+  .file-section input[type='file'] {
+    padding: 8px;
+  }
+
+  .file-section ion-button {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+  }
+
+  .status-section ion-text p {
+    font-size: 0.85rem;
+  }
+}
+
+/* Tablets */
+@media (min-width: 481px) and (max-width: 1024px) {
+  .center-container {
+    max-width: 450px;
+    margin: 30px auto;
+  }
+
+  ion-card-title {
+    font-size: 1.3rem;
+  }
+
+  ion-card-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .file-section ion-button {
+    font-size: 0.95rem;
+    padding: 9px 14px;
+  }
+
+  .status-section ion-text p {
+    font-size: 0.9rem;
+  }
+}
+
+/* Desktops */
+@media (min-width: 1025px) {
+  .center-container {
+    max-width: 500px;
+    margin: 40px auto;
+  }
+
+  ion-card-title {
+    font-size: 1.4rem;
+  }
+
+  ion-card-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .file-section ion-button {
+    font-size: 0.95rem;
+    padding: 10px 16px;
+  }
+
+  .status-section ion-text p {
+    font-size: 0.95rem;
+  }
+}
+
+/* Ultra-wide screens */
+@media (min-width: 1921px) {
+  .center-container {
+    max-width: 600px;
+  }
+
+  ion-card-title {
+    font-size: 1.5rem;
+  }
+
+  ion-card-subtitle {
+    font-size: 1rem;
+  }
+
+  .file-section ion-button {
+    font-size: 1rem;
+    padding: 12px 18px;
+  }
+
+  .status-section ion-text p {
+    font-size: 1rem;
+  }
+}
+/* ================= FILE INPUT LABELS ================= */
+ion-item {
+  --background: transparent !important;
+  color: #ffffff;
+}
+
+ion-item ion-label {
+  color: #d1d5db !important; /* warna kelabu putih */
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+
+.mt-2 {
+  margin-top: 12px;
+}
+
+.mt-3 {
+  margin-top: 18px;
+
+}
+.upload{
+  --background: linear-gradient(145deg,#00b3ff, #ffffff, #00b3ff);
+}
+
+/* Make input file match the UI */
+ion-item input[type="file"] {
+  margin-top: 6px;
+  width: 100%;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #e2e8f0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+ion-item input[type="file"]:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+/* ================= FILE LIST (CSV & PDF) ================= */
+
+ion-list {
+  margin-top: 12px;
+  border-radius: 12px;
+  overflow: hidden;
+
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Setiap file row */
+ion-list ion-item {
+  --background: transparent;
+  --padding-start: 14px;
+  --padding-end: 8px;
+  --inner-padding-end: 0;
+
+  color: #e5e7eb;
+  font-size: 0.9rem;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Last row buang border */
+ion-list ion-item:last-child {
+  border-bottom: none;
+}
+
+/* Nama file */
+ion-list ion-label {
+  color: #e5e7eb !important;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Button remove */
+ion-list ion-button {
+  --background: transparent;
+  --box-shadow: none;
+  --padding-start: 6px;
+  --padding-end: 6px;
+  height: 32px;
+}
+
+/* Icon X PNG */
+.remove-icon {
+  width: 16px;
+  height: 16px;
+  opacity: 0.7;
+  transition: all 0.15s ease-in-out;
+}
+
+/* Hover / Active effect */
+ion-list ion-item:hover .remove-icon {
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+/* Mobile tap feedback */
+ion-list ion-button:active .remove-icon {
+  transform: scale(0.95);
+}
+
+/* Remove icon PNG */
+.remove-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* Optional: bagi clickable area kemas */
+ion-button {
+  --padding-start: 4px;
+  --padding-end: 4px;
+}
+/* ================= PAYMENT SUMMARY CARD — FULL SCREEN WIDTH ================= */
+.payment-summary-card {
+  width: 100vw !important;
+  width: calc(100vw - 32px) !important; /* padding 16px kiri/kanan */
+  max-width: none !important;
+  position: relative !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+
+  background: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4) !important;
+  color: #fff !important;
+  margin: 24px 0 !important;
+}
+
+/* Kandungan card */
+.payment-summary-content {
+  padding: 24px !important;
+  width: calc(100vw - 24px) !important;
+}
+
+/* List table */
+.payment-summary-card ion-list {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 12px !important;
+}
+
+/* Ion-item — semua row dan header */
+.payment-summary-card ion-item,
+.payment-summary-card .main-header,
+.payment-summary-card .sub-header {
+  display: flex !important;
+  align-items: center !important;
+  --background: transparent !important;
+  --min-height: 44px !important;
+  color: #e5e7eb !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+/* Last item border */
+.payment-summary-card ion-item:last-child {
+  border-bottom: none !important;
+}
+
+/* Tick icon */
+.payment-summary-card .tick-icon {
+  width: 22px !important;
+  height: 22px !important;
+  opacity: 1 !important;
+  margin: 0 auto; /* center dalam sel */
+}
+
+/* ================= DATE COLUMN ================= */
+.payment-summary-card .main-header-date,
+.payment-summary-card .sub-header ion-label:first-child,
+.payment-summary-card ion-item ion-label:first-child {
+  flex: 0 0 120px !important; /* lebar tetap */
+  max-width: 120px !important;
+  min-width: 120px !important;
+  text-align: left !important;
+  padding-left: 0 !important;
+  font-weight: 600 !important;
+}
+
+/* ================= CSV & PDF COLUMNS ================= */
+
+/* CSV header: perkataan di kiri */
+.payment-summary-card .main-header-csv {
+  flex: 1 !important;
+  text-align: left !important;
+  padding-left: 8px;
+  font-weight: 600 !important;
+}
+
+/* PDF header: panjang sama dengan CSC + ABT */
+.payment-summary-card .main-header-pdf {
+  flex: 2 !important; /* panjang gabungan 2 kolum */
+  text-align: left !important;
+  padding-left: 8px;
+  font-weight: 600 !important;
+}
+
+/* Tick icon lain tetap center */
+.payment-summary-card .icon-cell {
+  flex: 1 !important;
+  text-align: center !important;
+  padding: 0 !important;
+}
+
+/* Row PDF: panjang sama seperti header PDF */
+.payment-summary-card ion-item .pdf-cell {
+  flex: 2 !important;
+  text-align: center !important;
+}
+
+/* ================= SPLIT COLUMN (GARIS TENGAH) ================= */
+.payment-summary-card .split-col {
+  display: flex;
+  flex: 1;
+  border-left: 1px solid rgba(255, 255, 255, 0.2); /* garisan tengah */
+}
+
+.payment-summary-card .split-col .left,
+.payment-summary-card .split-col .right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 4px 8px;
+}
+
+.payment-summary-card .split-col .right {
+  justify-content: flex-start;
+  padding-left: 16px;
+  border-left: 1px solid rgba(255, 255, 255, 0.2); /* vertical line tengah */
+}
+
+
+/* ================= PAYMENT SUMMARY CARD — RESPONSIVE OVERLAY ================= */
+@media screen and (max-width: 768px) {
+  /* Boleh scroll horizontal bila skrin kecil */
+  .payment-summary-card {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important; /* smooth scroll iOS */
+  }
+
+  /* Card content ikut lebar scrollable */
+  .payment-summary-content {
+    min-width: 600px; /* lebar minimum supaya kolum tak pecah */
+  }
+
+  /* Kurangkan saiz ikon supaya muat mobile */
+  .payment-summary-card .tick-icon {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  /* Kurangkan lebar column tarikh */
+  .payment-summary-card ion-item ion-label:first-child {
+    flex: 0 0 80px !important;
+    max-width: 80px !important;
+    min-width: 80px !important;
+    font-size: 12px !important;
+  }
+
+  /* Kurangkan width icon cell untuk muat mobile */
+  .payment-summary-card .icon-cell {
+    flex: 1 1 40px !important;
+    min-width: 40px !important;
+    padding: 0 2px !important;
+  }
+
+  /* JobNo kecil supaya muat */
+  .payment-summary-card .jobno {
+    font-size: 10px !important;
+  }
+}
+
+/* ================= MONTH FILTER ================= */
+.month-filter-section {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.month-filter-section ion-item {
+  --background: rgba(255, 255, 255, 0.05) !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(8px);
+  color: #e2e8f0 !important;
+}
+
+.month-filter-section ion-label {
+  color: #d1d5db !important;
+}
+
+.month-filter-section ion-select {
+  color: #ffffff !important;
+}
+/* Grid untuk filter bulan & plaza */
+.month-filter-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* dua kolum */
+  gap: 12px; /* jarak antara dua dropdown */
+  align-items: flex-end;
+  padding: 0 12px; /* jarak kiri & kanan grid */
+}
+
+/* Tambah padding dalam ion-item supaya label + select tak melekat sangat ke kiri */
+.month-filter-section ion-item {
+  --inner-padding-start: 8px; /* jarak kiri dalaman */
+  --inner-padding-end: 8px;   /* jarak kanan dalaman */
+}
+
+/* Responsive untuk mobile: satu kolum */
+@media (max-width: 600px) {
+  .month-filter-section {
+    grid-template-columns: 1fr;
+  }
+}
+/* ================= RESPONSIVE MEDIA QUERIES ================= */
+
+/* Small mobile devices <= 480px */
+@media (max-width: 480px) {
+  .center-container {
+    margin: 20px auto;
+    padding: 0 10px;
+  }
+
+  ion-card-title {
+    font-size: 1.2rem;
+  }
+
+  ion-card-subtitle {
+    font-size: 0.8rem;
+  }
+
+  .file-section input[type='file'] {
+    padding: 8px;
+  }
+
+  .file-section ion-button {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+  }
+
+  .status-section ion-text p {
+    font-size: 0.85rem;
+  }
+
+  /* Month filter: stack dropdowns */
+  .month-filter-section {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Tablets: 481px - 1024px */
+@media (min-width: 481px) and (max-width: 1024px) {
+  .center-container {
+    max-width: 450px;
+    margin: 30px auto;
+  }
+
+  ion-card-title {
+    font-size: 1.3rem;
+  }
+
+  ion-card-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .file-section ion-button {
+    font-size: 0.95rem;
+    padding: 9px 14px;
+  }
+
+  .status-section ion-text p {
+    font-size: 0.9rem;
+  }
+}
+
+/* Desktop: 1025px - 1920px */
+@media (min-width: 1025px) and (max-width: 1920px) {
+  .center-container {
+    max-width: 500px;
+    margin: 40px auto;
+  }
+
+  ion-card-title {
+    font-size: 1.4rem;
+  }
+
+  ion-card-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .file-section ion-button {
+    font-size: 0.95rem;
+    padding: 10px 16px;
+  }
+
+  .status-section ion-text p {
+    font-size: 0.95rem;
+  }
+}
+
+/* Ultra-wide screens: >1920px */
+@media (min-width: 1921px) {
+  .center-container {
+    max-width: 600px;
+  }
+
+  ion-card-title {
+    font-size: 1.5rem;
+  }
+
+  ion-card-subtitle {
+    font-size: 1rem;
+  }
+
+  .file-section ion-button {
+    font-size: 1rem;
+    padding: 12px 18px;
+  }
+
+  .status-section ion-text p {
+    font-size: 1rem;
+  }
+}
+
+/* Payment summary card padding adjustment for tablets and above */
+@media (min-width: 768px) {
+  .payment-summary-content {
+    padding: 32px 40px !important;
+    width: calc(100vw - 64px) !important;
+  }
+}
+.jobno {
+  font-size: 11px;
+  color: #ffd700;
+  margin-top: 3px;
+  text-align: center;
+  line-height: 1.2;
+}
+/* Center button under dropdowns */
+.center-button {
+  display: flex;
+  justify-content: center; /* center horizontal */
+  margin-top: 16px;       /* jarak dari dropdowns */
+  width: 100%;
+}
+
+/* Button styling */
+.center-button ion-button {
+  max-width: 300px;       /* jangan terlalu lebar */
+  text-align: center;
+  --border-radius: 8px;
+  font-weight: 400;
+  --background: #00ff15;
+
+}
+
+/* ================= MODAL ================= */
+.modal {
+  --background:transparent;
+  --border-radius: 16px;
+  --width: 90%;
+  --max-width: 500px;
+  --height: 80vh;
+  --max-height: 80vh;
+  color: #000000 !important;
+  padding: 0;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+/* Header modal */
+.modal ion-toolbar {
+  --background: #ffffff !important;
+  --color: #000000 !important;
+  font-weight: 600;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.modal ion-title {
+  font-size: 1.3rem;
+  text-align: center;
+  color: #000000 !important;
+}
+
+/* Close button */
+.modal ion-buttons ion-button {
+  --color: #000000 !important;
+  --background: transparent;
+  font-weight: 500;
+}
+
+/* Content modal */
+.modal ion-content {
+  --background: #ffffff !important;
+  padding: 16px;
+  color: #000000 !important;
+}
+
+/* List inside modal */
+.modal ion-list {
+  background: #f9f9f9;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  max-height: 60vh;
+  overflow-y: auto;
+  margin: 0;
+}
+
+/* Each item */
+.modal ion-item {
+  --background: #ffffff !important;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 12px 16px;
+  color: #000000 !important;
+}
+
+.modal ion-item:last-child {
+  border-bottom: none;
+}
+
+/* Label inside item */
+.modal ion-label {
+  font-size: 0.95rem;
+  color: #000000 !important;
+  line-height: 1.4;
+  white-space: normal;
+}
+
+/* Highlight if all complete */
+.modal ion-text h2 {
+  text-align: center;
+  margin: 30% auto;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #007700; /* hijau untuk highlight */
+}
+
+/* Scrollbar styling (opsional) */
+.modal ion-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal ion-list::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 4px;
+}
+
+.modal ion-list::-webkit-scrollbar-thumb {
+  background: #cccccc;
+  border-radius: 4px;
+}
+
+/* Responsive untuk mobile */
+@media (max-width: 480px) {
+  .modal {
+    --width: 95%;
+    --max-width: 95%;
+    --max-height: 70vh;
+  }
+
+  .modal ion-title {
+    font-size: 1.2rem;
+  }
+
+  .modal ion-label {
+    font-size: 0.9rem;
+  }
+}
+.custom-icon {
+  width: 24px;   /* saiz ikut ion-icon default */
+  height: 24px;
+  cursor: pointer;
+}
+
+.notification-fab {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: auto;
+  height: auto;
+  background: transparent;
+  box-shadow: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 999;
+  padding: 0;
+}
+
+.notification-fab img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  transition: transform 0.2s;
+}
+
+@keyframes bell-shake-cycle {
+
+  0%   { transform: rotate(0deg); }
+  86%  { transform: rotate(0deg); }
+  88%  { transform: rotate(-15deg); }
+  90%  { transform: rotate(15deg); }
+  92%  { transform: rotate(-12deg); }
+  94%  { transform: rotate(12deg); }
+  96%  { transform: rotate(-9deg); }
+  97%  { transform: rotate(9deg); }
+  98%  { transform: rotate(-6deg); }
+  99%  { transform: rotate(6deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.bell {
+  transform-origin: top center;
+  animation: bell-shake-cycle 5.8s infinite;
+  animation-timing-function: cubic-bezier(.36,.07,.19,.97);
+}
+
+
+.notification-fab:hover img {
+  transform: scale(1.1);
+}
+
+
+.notification-fab .badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: #e74c3c;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+}
+
+/* Notification Modal Styling */
+.notification-content {
+  overflow-y: auto;
+  --overflow: auto;
+
+}
+.scroll-body {
+  overflow-y: auto;
+
+  scrollbar-width: none;      /* Firefox */
+  -ms-overflow-style: none;   /* IE 10+ */
+  -webkit-overflow-scrolling: touch;
+}
+
+.scroll-body::-webkit-scrollbar {
+  display: none;              /* Chrome, Safari, Opera */
+}
+.modal-m{
+  --background:transparent;
+  --height: 80vh;
+  --max-height: 80vh;
+}
+
+.modal-blur {
+  --background: transparent !important;
+  --border-radius: 0;
+  --box-shadow: none;
+}
+
+.modal-blur .modal-content {
+  background: transparent !important;
+  padding: 0;
+  overflow-y: auto;
+}
+
+.modal-inner {
+  position: relative;
+  z-index: 2;
+  padding: 16px;
+  color: #000;
+}
+
+.modal-blur::part(backdrop) {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: transparent;
+}
+
+
+ion-modal.modal-m::part(content) {
+  height: 80vh;
+  max-height: 80vh;
+  overflow: hidden;
+}
+
+.ion-delegate-host.ion-page {
+  background: transparent !important;
+}
+
+.modal-grid {
+  padding: 16px;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.modal-col {
+  padding: 0;
+}
+
+/* Gap antara bahagian */
+.gap {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Section header */
+.missing-section {
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.251);
+  border-left: 4px solid #4CAF50;
+
+  margin: 12px 0; /* <--- jarak atas & bawah */
+
+}
+
+.csv-header {
+  color: #0dcc5a; /* biru untuk CSV (TNG/RFID/ABTC) */
+  border-left-color: #1976D2 !important;
+}
+
+.pdf-header {
+  color: #e91e1e; /* merah jambu untuk PDF (CSC/ABT) */
+  border-left-color: #E91E63 !important;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.section-header ion-icon {
+  font-size: 20px;
+}
+
+.section-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  text-transform: capitalize; /* First letter of each word capitalized */
+}
+
+h3{
+    font-size: 12px;
+  font-weight: 600;
+  margin: 0;
+  text-transform: capitalize; /* First letter of each word capitalized */
+}
+
+.dates-list {
+  margin: 0;
+  font-size: 15px;
+  color: #333333;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+/* All uploaded state */
+.all-uploaded {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.success-icon {
+  font-size: 64px;
+  color: #4CAF50;
+  margin-bottom: 16px;
+}
+
+.all-uploaded p {
+  font-size: 18px;
+  color: #333333;
+  font-weight: 500;
+}
+
+/* Responsif tambahan */
+@media (max-width: 480px) {
+  .modal-grid {
+    padding: 12px;
+  }
+
+  .missing-section {
+    padding: 14px;
+  }
+
+  .section-header h2 {
+    font-size: 16px;
+  }
+
+  .dates-list {
+    font-size: 14px;
+  }
+}
+.custom-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  vertical-align: middle;
+}
+@media (max-width: 480px) {
+  .notification-fab {
+    bottom: 80px; /* mobile */
+  }
+}
+
+@media (min-width: 481px) {
+  .notification-fab {
+    bottom: 30px; /* desktop/tablet */
+  }
+}
+/* Base: compact items */
+.small-item {
+  --inner-padding-top: 0px !important;
+  --inner-padding-bottom: 0px !important;
+}
+
+.small-label-1 {
+  font-size: 0.8rem !important;
+  margin-bottom: 0px !important;
+  margin-top: 10px !important;
+  line-height: 1rem !important;
+}
+.small-label {
+  font-size: 1rem !important;
+  margin-bottom: 0px !important;
+  margin-top: 0px !important;
+  line-height: 1rem !important;
+}
+
+/* Input & Select */
+.inline-input {
+  font-size: 0.85rem !important;
+  height: auto !important;
+  padding: 8px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+/* Targetion-select menggunakan class inline-select */
+.inline-select {
+  --min-height: 32px;      /* tinggi minimum kotak */
+  --padding-top: 4px;      /* padding atas teks */
+  --padding-bottom: 4px;   /* padding bawah teks */
+  font-size: 0.85rem;
+  line-height: 1.2rem;
+}
+
+/* Optional: kalau nak adjust icon juga */
+.inline-select::part(icon) {
+  font-size: 0.9rem;
+  width: 16px;
+  height: 16px;
+}
+
+/* Optional: adjust teks di dalam kotak select */
+.inline-select::part(text) {
+  font-size: 0.85rem;
+  line-height: 1.2rem;
+}
+
+.pdf-inline-grid {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.pdf-input-col {
+  flex: 2 1 60%; /* flex-grow, flex-shrink, flex-basis */
+  min-width: 200px; /* minimum width supaya tak collapse */
+}
+
+.pdf-type-col {
+  flex: 1 1 35%;
+  min-width: 140px;
+  margin-top: 9px;
+}
+
+/* Wrapper & Label + Icon */
+.pdf-type-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+  overflow: visible;
+}
+
+.label-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  font-size: 0.7rem !important;
+  margin-bottom: 0px !important;
+  margin-top: 10px !important;
+  line-height: 1rem !important;
+}
+
+.info-icon {
+  width: 16px;
+  height: 16px;
+  margin-top: 0px;
+  margin-left: 8px;
+  cursor: pointer;
+  pointer-events: auto !important;
+}
+
+/* Tooltip styling */
+.global-tooltip {
+  position: fixed;
+  display: none;
+  background: #f8fbfd;
+  color: #1f2933;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  max-width: 280px;
+  z-index: 99999;
+  pointer-events: none;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  border: 1px solid rgba(0,0,0,0.08);
+  animation: tooltipFade 0.15s ease-in-out;
+}
+
+.tooltip-title {
+  font-weight: 600;
+  font-size: 0.8rem;
+  margin-bottom: 8px;
+  color: #a50000;
+}
+
+.tooltip-section {
+  margin-bottom: 12px;
+}
+
+.tooltip-section:last-child {
+  margin-bottom: 0;
+}
+
+@keyframes tooltipFade {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== MEDIA QUERIES ===== */
+
+/* Tablet */
+@media screen and (max-width: 1024px) {
+  .pdf-input-col {
+    flex: 2 1 55%; /* adjust column width */
+  }
+  .pdf-type-col {
+    flex: 1 1 40%; /* adjust column width */
+  }
+
+  .inline-input,
+  .inline-select {
+    padding: 6px !important; /* only adjust padding */
+    /* font-size tetap ikut asal (0.85rem) */
+  }
+}
+
+/* Mobile / small devices */
+@media screen and (max-width: 768px) {
+  .pdf-inline-grid {
+    flex-direction: row; /* tetap inline */
+    flex-wrap: nowrap;   /* prevent stacking */
+    gap: 8px;            /* adjust gap */
+  }
+
+  .pdf-input-col {
+    flex: 2 1 60%;       /* adjust flex */
+    min-width: 140px;    /* prevent collapse */
+  }
+
+  .pdf-type-col {
+    flex: 1 1 35%;       /* adjust flex */
+    min-width: 120px;    /* prevent collapse */
+    margin-top: 0;       /* aligned top */
+  }
+
+  .inline-input,
+  .inline-select {
+    padding: 5px !important; /* adjust padding only */
+    /* font-size tetap ikut asal */
+  }
+
+  .info-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* tooltip & label tetap asal styling */
+}

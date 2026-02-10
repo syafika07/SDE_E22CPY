@@ -1,0 +1,7 @@
+{
+  "name": "SDE22_Dashboard",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

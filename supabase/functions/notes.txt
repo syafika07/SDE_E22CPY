@@ -1,0 +1,257 @@
+async downloadReport() {
+  this.isDownloadingPDF = true;
+  this.progress = 0;
+  const interval = setInterval(() => {
+    if (this.progress < 95) this.progress += 1;
+  }, 50);
+
+  await new Promise(resolve => setTimeout(resolve, 200));
+
+  try {
+    const doc = new jsPDF('l', 'pt', 'a4');
+    const marginX = 40;
+    let currentY = 50;
+
+    // ===== HEADER =====
+    doc.setFontSize(20);
+    doc.setFont('helvetica', 'bold');
+    doc.text('RFID/ABTC Analytics Report', marginX, currentY);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    currentY += 25;
+    doc.text(`Date: ${this.selectedDate || 'All Dates'}`, marginX, currentY);
+    currentY += 15;
+    const plazaText = Array.isArray(this.selectedPlaza)
+      ? this.selectedPlaza.join(', ')
+      : this.selectedPlaza || 'All Plazas';
+    doc.text(`Plaza: ${plazaText}`, marginX, currentY);
+    currentY += 25;
+    doc.setLineWidth(0.5);
+    doc.line(marginX, currentY, doc.internal.pageSize.getWidth() - marginX, currentY);
+
+    // ===== CLASS x ENTRY PLAZA SUMMARY =====
+    currentY += 20;
+    if (this.dynamicClassPlaza?.length) {
+      const entryPlazas = this.dynamicEntryPlazas;
+      const headRow1: any[] = [
+        { content: 'Class', rowSpan: 2, styles: { halign: 'center', valign: 'middle' } },
+      ];
+      entryPlazas.forEach((plaza) => {
+        headRow1.push({
+          content: `Entry Plaza ${plaza}`,
+          colSpan: 2,
+          styles: { halign: 'center', valign: 'middle' },
+        });
+      });
+      headRow1.push(
+        { content: 'Total Traffic', rowSpan: 2, styles: { halign: 'center', valign: 'middle' } },
+        { content: 'Total Paid (RM)', rowSpan: 2, styles: { halign: 'center', valign: 'middle' } }
+      );
+
+      const headRow2: any[] = [];
+      entryPlazas.forEach(() => {
+        headRow2.push(
+          { content: 'Traffic', styles: { halign: 'center' } },
+          { content: 'Paid (RM)', styles: { halign: 'center' } }
+        );
+      });
+
+      const bodyRows = this.dynamicClassPlaza.map((row: any) => {
+        const dataRow: any[] = [row.Class];
+        entryPlazas.forEach((plaza) => {
+          dataRow.push(
+            row[`${plaza}_Traffic`] || 0,
+            `RM ${(row[`${plaza}_Paid`] || 0).toFixed(2)}`
+          );
+        });
+        dataRow.push(row.TotalTrafficAll || 0, `RM ${(row.TotalPaidAll || 0).toFixed(2)}`);
+        return dataRow;
+      });
+
+      const totalRow: any[] = ['Total'];
+      entryPlazas.forEach((plaza) => {
+        const sumTraffic = this.dynamicClassPlaza.reduce(
+          (sum: number, r: any) => sum + (r[`${plaza}_Traffic`] || 0),
+          0
+        );
+        const sumPaid = this.dynamicClassPlaza.reduce(
+          (sum: number, r: any) => sum + (r[`${plaza}_Paid`] || 0),
+          0
+        );
+        totalRow.push(sumTraffic, `RM ${sumPaid.toFixed(2)}`);
+      });
+      const totalTrafficAll = this.dynamicClassPlaza.reduce(
+        (sum: number, r: any) => sum + (r.TotalTrafficAll || 0),
+        0
+      );
+      const totalPaidAll = this.dynamicClassPlaza.reduce(
+        (sum: number, r: any) => sum + (r.TotalPaidAll || 0),
+        0
+      );
+      totalRow.push(totalTrafficAll, `RM ${totalPaidAll.toFixed(2)}`);
+
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Class x Entry Plaza Summary', marginX, currentY);
+      currentY += 10;
+
+      autoTable(doc, {
+        startY: currentY,
+        head: [headRow1, headRow2],
+        body: bodyRows,
+        styles: { fontSize: 8, halign: 'center', lineColor: [0, 0, 0], lineWidth: 0.1 },
+        headStyles: { fillColor: [255, 152, 0], textColor: 0, halign: 'center', lineWidth: 0.1 },
+        theme: 'grid',
+      });
+      currentY = (doc as any).lastAutoTable.finalY + 30;
+    }
+
+    // ===== OVERALL SUMMARY =====
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text('Overall Summary', marginX, currentY);
+    const summaryData = [
+      ['Total Transactions', this.totalTransactions || 0],
+      ['Active Plazas', this.totalPlazas || 0],
+      ['Total Paid', `RM ${this.totalPaid?.toFixed(2) || '0.00'}`],
+    ];
+    autoTable(doc, {
+      startY: currentY + 10,
+      head: [['Summary', 'Value']],
+      body: summaryData,
+      styles: { fontSize: 10, halign: 'center' },
+      headStyles: { fillColor: [33, 150, 243], halign: 'center' },
+      theme: 'grid',
+    });
+    currentY = (doc as any).lastAutoTable.finalY + 30;
+
+    // ===== PAYMENT MODE SUMMARY (sebelum chart, single page) =====
+    if (this.paymentSummary?.length) {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(14);
+      doc.text('Payment Mode Summary', marginX, currentY);
+      currentY += 10;
+
+      const paymentBody = this.paymentSummary.map((s: any) => [
+        s.PaymentMode || 'Unknown',
+        `RM ${(s.totalPaid || 0).toFixed(2)}`
+      ]);
+      const totalPaidAll = this.paymentSummary.reduce(
+        (sum: number, s: any) => sum + (s.totalPaid || 0),
+        0
+      );
+      paymentBody.push(['**Total**', `RM ${totalPaidAll.toFixed(2)}`]);
+
+      autoTable(doc, {
+        startY: currentY,
+        head: [['Payment Mode', 'Total Paid Amount']],
+        body: paymentBody,
+        styles: { fontSize: 10, halign: 'center', lineColor: [0,0,0], lineWidth: 0.1 },
+        headStyles: { fillColor: [255,152,0], textColor:0, halign:'center', lineWidth:0.1 },
+        theme: 'grid',
+        pageBreak: 'avoid',
+        didParseCell: (data) => {
+          if (data.section === 'body' && data.row.index === paymentBody.length - 1) {
+            data.cell.styles.fontStyle = 'bold';
+            data.cell.styles.fillColor = [245,245,245];
+          }
+        }
+      });
+
+      currentY = (doc as any).lastAutoTable.finalY + 30;
+    }
+
+    // ===== ENTRY PLAZA SUMMARY =====
+    if (this.summaryData?.length) {
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Entry Plaza Summary', marginX, currentY);
+      currentY += 10;
+      autoTable(doc, {
+        startY: currentY,
+        head: [['Entry Plaza', 'Total']],
+        body: this.summaryData.map((s: any) => [s.EntryPlaza, s.total]),
+        styles: { fontSize: 10, halign: 'center' },
+        headStyles: { fillColor: [76, 175, 80], halign: 'center' },
+        theme: 'grid',
+      });
+      currentY = (doc as any).lastAutoTable.finalY + 30;
+    }
+
+    // ===== CHARTS =====
+    const charts = [
+      { id: 'chart-card-1', title: 'Entry Plaza (Total)' },
+      { id: 'chart-card-2', title: 'Class (Total)' },
+      { id: 'chart-card-3', title: 'Total Paid Amount (Plaza No)' },
+    ];
+    const maxWidth = 600;
+    const maxHeight = 350;
+    for (const chart of charts) {
+      const chartElement = document.getElementById(chart.id) as HTMLElement;
+      if (!chartElement) continue;
+      const canvas = await html2canvas(chartElement, {
+        scale: 2,
+        backgroundColor: null,
+        useCORS: true,
+      });
+      const imgData = canvas.toDataURL('image/png');
+      let imgWidth = maxWidth;
+      let imgHeight = (canvas.height * imgWidth) / canvas.width;
+      if (imgHeight > maxHeight) {
+        imgHeight = maxHeight;
+        imgWidth = (canvas.width * imgHeight) / canvas.height;
+      }
+      if (currentY + imgHeight + 50 > doc.internal.pageSize.getHeight()) {
+        doc.addPage();
+        currentY = 60;
+      }
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(13);
+      doc.text(chart.title, marginX, currentY);
+      currentY += 15;
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const xCenter = (pageWidth - imgWidth) / 2;
+      doc.addImage(imgData, 'PNG', xCenter, currentY, imgWidth, imgHeight);
+      currentY += imgHeight + 30;
+    }
+
+    // ===== FOOTER =====
+    const totalPages = (doc as any).internal.getNumberOfPages();
+    const generatedDate = new Date().toLocaleString();
+    for (let i = 1; i <= totalPages; i++) {
+      doc.setPage(i);
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      doc.setFontSize(9);
+      doc.setTextColor(100);
+      const roleLabel = this.roleLabelMap[this.currentUser.role] || this.currentUser.role;
+      const userInfo = `${this.capitalizeName(this.currentUser.name)} | ${this.currentUser.email} | ${roleLabel}`;
+      const footerText = `Generated on ${generatedDate} | ${userInfo} | TNG Analytics Dashboard | Page ${i} of ${totalPages}`;
+      doc.text(footerText, pageWidth - marginX, pageHeight - 20, { align: 'right' });
+    }
+
+    // ===== FILE NAME =====
+    const selectedDateStr = this.selectedDate
+      ? this.selectedDate.split('T')[0]
+      : new Date().toISOString().split('T')[0];
+    const paymentModes = Array.isArray(this.selectedPaymentModes)
+      ? this.selectedPaymentModes.join('-') || 'AllPaymentModes'
+      : this.selectedPaymentModes || 'AllPaymentModes';
+    const plazas = Array.isArray(this.selectedPlaza)
+      ? this.selectedPlaza.join('-') || 'AllPlazas'
+      : this.selectedPlaza || 'AllPlazas';
+
+    const fileName = `${paymentModes}_${selectedDateStr}_${plazas}.pdf`
+      .replace(/\s+/g, '')
+      .replace(/[^\w\-\.]/g, '');
+
+    doc.save(fileName);
+
+  } catch (err) {
+    this.logger.error('Error generating PDF:', err);
+  } finally {
+    clearInterval(interval);
+    this.progress = 100;
+    this.isDownloadingPDF = false;
+  }
+}

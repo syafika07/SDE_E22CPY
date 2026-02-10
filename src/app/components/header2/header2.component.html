@@ -1,0 +1,46 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Info TV System</ion-title>
+
+    <ion-buttons slot="end">
+
+      <ion-button
+        [color]="activeRoute === ROUTES.EDIT_INFO ? 'primary' : 'medium'"
+        fill="clear"
+        (click)="setActiveAndNavigate(ROUTES.EDIT_INFO)"
+        class="nav-btn">
+        Edit Info
+        @if (activeRoute === ROUTES.EDIT_INFO) {
+          <span class="toggle-indicator"></span>
+        }
+      </ion-button>
+
+      <ion-button
+        [color]="activeRoute === ROUTES.ADD_INFO ? 'primary' : 'medium'"
+        fill="clear"
+        (click)="setActiveAndNavigate(ROUTES.ADD_INFO)"
+        class="nav-btn">
+        Add Info
+        @if (activeRoute === ROUTES.ADD_INFO) {
+          <span class="toggle-indicator"></span>
+        }
+      </ion-button>
+
+      <ion-button
+        [color]="activeRoute === ROUTES.TV_DISPLAY ? 'primary' : 'medium'"
+        fill="clear"
+        (click)="setActiveAndNavigate(ROUTES.TV_DISPLAY)"
+        class="nav-btn">
+        TV Display
+        @if (activeRoute === ROUTES.TV_DISPLAY) {
+          <span class="toggle-indicator"></span>
+        }
+      </ion-button>
+
+      <ion-button fill="clear" size="small" (click)="logout()" class="logout-btn">
+        <img src="assets/logout.png" alt="Logout" class="logout-icon">
+      </ion-button>
+
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>

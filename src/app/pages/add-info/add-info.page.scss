@@ -1,0 +1,584 @@
+/* =========================
+   Global Page Styling
+========================= */
+:root {
+  --ion-background-color: #ffffff;
+  --ion-text-color: #1a1a1a;
+  --ion-color-primary: #1e88e5;
+  --ion-color-primary-contrast: #ffffff;
+}
+
+.page-content {
+  --background: #f5f7fa;
+  padding: 20px;
+  font-family: 'Inter', sans-serif;
+}
+
+/* =========================
+   Force Ion Content — Always White Background & Black Text (non-buttons)
+========================= */
+
+/* ✅ Background content sentiasa putih */
+ion-content {
+  --background: #ffffff !important;
+  background-color: #ffffff !important;
+}
+
+/* ✅ Semua teks dalam content jadi hitam (#1a1a1a), kecuali button & chip khas */
+ion-content *:not(ion-button):not(.btn-yellow):not(.fill-outline):not(ion-chip):not(.datetime-chip) {
+  color: #1a1a1a !important;
+}
+
+/* Spesifik: komponen biasa */
+ion-content ion-card,
+ion-content ion-item,
+ion-content ion-label,
+ion-content ion-text,
+ion-content p,
+ion-content h1,
+ion-content h2,
+ion-content h3,
+ion-content h4,
+ion-content h5,
+ion-content h6,
+ion-content span,
+ion-content div,
+ion-content .label-floating,
+ion-content .input,
+ion-content .textarea,
+ion-content .select {
+  color: #1a1a1a !important;
+}
+
+/* Input/textarea/select — hitam */
+ion-input::part(input),
+ion-textarea::part(textarea),
+ion-select::part(select) {
+  color: #1a1a1a !important;
+  background: transparent !important;
+}
+
+/* Placeholder & blank editor hint — abu-abu, italics */
+ion-input::part(input)::placeholder,
+ion-textarea::part(textarea)::placeholder,
+.description-card quill-editor ::ng-deep .ql-editor.ql-blank::before {
+  color: #90a4ae !important;
+  font-style: italic;
+}
+
+/* Chip — biru (Cuti/Hebahan/Meeting) */
+ion-content ion-chip {
+  color: #0d47a1 !important;
+  background-color: #e3f2fd !important;
+}
+
+/* DateTime chip — merah */
+ion-content .datetime-chip {
+  color: #c62828 !important;
+  background: #ffe3e3 !important;
+}
+
+
+
+/* =========================
+   Grid Layout
+========================= */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Maksimum 2 kad per baris */
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================
+   Card Styling — ✅ TIADA shadow/hover
+========================= */
+ion-card {
+  --background: #ffffff;
+  border-radius: 16px;
+  box-shadow: none; /* ✅ dipadam ikut preferensi */
+}
+
+/* =========================
+   Item / Input Styling
+========================= */
+ion-item {
+  --background: transparent;
+  --border-radius: 12px;
+  --border-width: 0;
+  margin-bottom: 0;
+  padding: 10px 14px;
+}
+
+.label-floating {
+  color: #0d47a1;
+  font-weight: 600;
+  font-size: 15px;
+  text-transform: capitalize; /* ✅ Awang suka kapitalisasi awal setiap perkataan */
+}
+
+.input, .textarea, .select {
+  font-size: 15px;
+  color: #1a1a1a;
+}
+
+/* Fokus — accent biru */
+ion-input:focus-within,
+ion-textarea:focus-within,
+ion-select:focus-within {
+  --highlight-color-focused: #0d47a1;
+}
+
+ion-item.item-has-focus {
+  --highlight-color-focused: #0d47a1;
+}
+
+ion-input::part(input):focus,
+ion-textarea::part(textarea):focus {
+  outline: none;
+  border-bottom: 2px solid #0d47a1;
+}
+
+/* =========================
+   Buttons Styling — ✅ TIADA hover, tiada transform
+========================= */
+ion-button.btn-yellow {
+  --background: linear-gradient(135deg, #42a5f5, #1e88e5);
+  --color: #ffffff;
+  font-weight: 600;
+  font-size: 16px;
+  border-radius: 12px;
+  box-shadow: none;
+  transition: opacity 0.2s ease;
+}
+
+ion-button.btn-yellow:active {
+  opacity: 0.92;
+}
+
+ion-button.fill-outline {
+  --background: transparent;
+  --border-color: #1e88e5;
+  --color: #1e88e5;
+}
+
+ion-button.fill-outline:active {
+  background: #e3f2fd;
+}
+
+/* Button Group */
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+/* =========================
+   Chips Styling — ✅ TIADA hover/scale
+========================= */
+.chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+ion-chip {
+  background-color: #e3f2fd;
+  color: #0d47a1;
+  border-radius: 24px;
+  padding: 5px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+ion-chip ion-icon {
+  cursor: pointer;
+  font-size: 16px;
+  margin-left: 6px;
+  color: #0d47a1;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+ion-chip ion-icon:hover {
+  opacity: 1;
+}
+
+/* DateTime Chips — tanpa hover */
+.datetime-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffe3e3;
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 13px;
+  color: #c62828;
+}
+
+.datetime-chip ion-button {
+  --padding-start: 2px;
+  --padding-end: 2px;
+  --min-width: 0;
+  height: 20px;
+  font-size: 14px;
+  line-height: 14px;
+}
+
+/* =========================
+   Scrollbar Styling
+========================= */
+.page-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.page-content::-webkit-scrollbar-track {
+  background: #f0f2f5;
+  border-radius: 10px;
+}
+
+.page-content::-webkit-scrollbar-thumb {
+  background: #90caf9;
+  border-radius: 10px;
+}
+
+.page-content::-webkit-scrollbar-thumb:hover {
+  background: #42a5f5;
+}
+
+/* =========================
+   Header Styling
+========================= */
+app-header {
+  display: block;
+  background: #1e88e5;
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 16px 20px;
+  box-shadow: none;
+  border-radius: 0 0 16px 16px;
+  letter-spacing: 0.5px;
+}
+
+/* =========================
+   Description Card — ✅ DI BAWAH SEKALI, PANJANG
+========================= */
+.description-card {
+  --background: #ffffff;
+  border-radius: 16px;
+  box-shadow: none;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.description-card ion-card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #0d47a1;
+  text-transform: capitalize;
+}
+
+/* Quill Editor — lebar penuh & panjang */
+.description-card quill-editor {
+  min-height: 500px;
+  height: auto;
+  width: 100%;
+}
+
+.description-card quill-editor ::ng-deep .ql-toolbar {
+  border: 1px solid #e0e0e0;
+  border-bottom: none;
+  border-radius: 12px 12px 0 0;
+  background-color: #f5f9ff;
+}
+
+.description-card quill-editor ::ng-deep .ql-container {
+  min-height: 460px;
+  border: 1px solid #e0e0e0;
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+}
+
+.description-card quill-editor ::ng-deep .ql-editor {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #1a1a1a;
+  padding: 16px;
+  font-family: 'Inter', sans-serif;
+}
+
+.description-card quill-editor ::ng-deep .ql-editor.ql-blank::before {
+  font-style: italic; /* ✅ Awang suka italics */
+  color: #90a4ae;
+  font-size: 15px;
+}
+
+/* Responsiviti untuk Description */
+@media (max-width: 768px) {
+  .description-card quill-editor {
+    min-height: 320px;
+  }
+  .description-card quill-editor ::ng-deep .ql-container {
+    min-height: 280px;
+  }
+}
+
+@media (max-height: 700px) {
+  .description-card quill-editor {
+    min-height: 280px;
+    max-height: 50vh;
+  }
+}
+
+/* =========================
+   Miscellaneous
+========================= */
+ion-textarea {
+  min-height: 80px;
+}
+
+ion-select {
+  --placeholder-color: #90a4ae;
+}
+
+ion-label b {
+  color: #212121;
+}
+
+ion-label div {
+  margin-top: 6px;
+}
+
+ion-button:active {
+  opacity: 0.95;
+}
+
+ion-card.gradient {
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  box-shadow: none;
+}
+
+/* =========================
+   Optional: Force Light Mode for Specific Pages
+   Guna class `.force-light-mode` pada <ion-content> jika perlu
+========================= */
+.force-light-mode {
+  --ion-background-color: #ffffff !important;
+  --ion-text-color: #1a1a1a !important;
+}
+
+.force-light-mode ion-content,
+.force-light-mode ion-card,
+.force-light-mode ion-item {
+  --background: #ffffff !important;
+  background-color: #ffffff !important;
+}
+app-add-info.ion-padding {
+  --padding-start: 0px !important;
+  --padding-end: 0px !important;
+  --padding-top: 0px !important;
+  --padding-bottom: 0px !important;
+  padding: 0 !important;
+}
+// ⚠️ Tiada warna gelap, tiada shadow, tiada hover, white background
+
+ion-content {
+  --background: #ffffff;
+
+  .cards-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+
+    @media (min-width: 768px) {
+      // Tablet & desktop: 2 column grid
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+  }
+
+  .form-card {
+    --background: rgba(255, 255, 255, 1); // Solid white
+    --ion-item-background: transparent;
+    box-shadow: none !important;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+
+    // ✅ 20% transparency untuk item Cuti/Hebahan/Meeting (jika digunakan untuk preview)
+    // Tapi untuk form, kita biar solid — boleh aktifkan jika perlu:
+    // &.cuti-card { --background: rgba(255, 240, 240, 0.8); } // merah lembut
+    // &.hebahan-card { --background: rgba(240, 255, 240, 0.8); } // hijau lembut
+    // &.meeting-card { --background: rgba(240, 245, 255, 0.8); } // biru lembut
+  }
+
+  .input-large {
+    min-height: 2.8rem;
+    font-size: 1.1rem;
+    --padding-start: 8px;
+    --padding-end: 8px;
+  }
+
+  ion-item {
+    --inner-padding-end: 8px;
+  }
+
+  .chips-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 8px 16px 8px 16px;
+
+    ion-chip {
+      height: auto;
+      ion-label {
+        font-size: 1rem;
+        padding: 0.3rem 0.6rem;
+        white-space: normal;
+        word-break: break-word;
+      }
+    }
+
+    .name-chip {
+      --background: #e3f2fd; // biru sangat lembut
+      --color: #1976d2;
+    }
+
+    .date-chip {
+      --background: #f1f8e9; // hijau sangat lembut
+      --color: #388e3c;
+    }
+  }
+
+  .date-button {
+    margin-top: 8px;
+    --height: 3.2rem;
+    font-size: 1.05rem;
+    font-weight: 500;
+  }
+
+  .selected-dates-card {
+    --background: #f9f9f9;
+  }
+
+  // 🔹 Quill Editor — besar, jelas, tiada border gelap
+  .description-card {
+    grid-column: 1 / -1; // full width on tablet+
+    margin-top: 8px;
+
+    .desc-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      padding: 16px 16px 8px;
+      color: #333;
+    }
+
+    ion-card-content {
+      padding: 0 16px 16px;
+    }
+
+    .quill-editor-custom {
+      height: 240px; // ✅ Tinggi mencukupi
+      font-size: 1.1rem;
+      line-height: 1.5;
+
+      ::ng-deep .ql-container {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-size: 1.1rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        background: #fff;
+
+        .ql-editor {
+          min-height: 200px;
+          padding: 12px;
+          color: #333;
+        }
+      }
+
+      ::ng-deep .ql-toolbar {
+        border: 1px solid #ccc;
+        border-bottom: none;
+        border-radius: 6px 6px 0 0;
+        background: #fafafa;
+        padding: 6px;
+
+        button {
+          width: 36px;
+          height: 36px;
+          svg {
+            width: 18px;
+            height: 18px;
+          }
+        }
+      }
+    }
+  }
+
+  // 🔹 Butang — besar, jelas, scalable
+  .button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 12px;
+
+    ion-button {
+      --border-radius: 10px;
+      --box-shadow: none;
+      font-size: 1.15rem;
+      font-weight: 600;
+      height: 56px;
+      text-transform: none;
+    }
+
+    .btn-save {
+      --background: #1976d2;        /* biru gelap (primary) */
+      --background-hover: #1565c0;  /* biru lebih gelap bila hover */
+      --color: white;
+    }
+
+    .btn-reset {
+      --border-color: #9e9e9e;
+      --color: #616161;
+    }
+  }
+
+  // ✅ Skalabiliti font (responsive)
+  @media (min-width: 1200px) {
+    :host {
+      font-size: 110%;
+    }
+    .quill-editor-custom {
+      height: 280px;
+      ::ng-deep .ql-editor { min-height: 240px; }
+    }
+  }
+
+  // ✅ Full screen friendly — pastikan tiada scroll berlebihan
+  @media (max-height: 700px) {
+    .quill-editor-custom {
+      height: 180px;
+      ::ng-deep .ql-editor { min-height: 140px; }
+    }
+  }
+}
+.remove-icon {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  margin-left: 6px;
+  margin-right: 4px;
+  // Elakkan hover effect mengikut preference anda
+}

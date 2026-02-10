@@ -1,0 +1,323 @@
+<app-header></app-header>
+
+<ion-content fullscreen class="ion-padding background" [inert]="loading">
+  <div class="center-container">
+
+    <!-- Upload Card -->
+    <ion-card class="upload-card animate-fade">
+      <ion-card-header>
+        <ion-card-title>Upload Data</ion-card-title>
+        <ion-card-subtitle>CSV & PDF Combined Upload</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <!-- CSV Input -->
+        <ion-item lines="none">
+          <ion-label position="stacked" class="small-label">Choose CSV</ion-label>
+          <input
+            type="file"
+            accept=".csv"
+            multiple
+            (change)="onFileSelected($event)"
+          />
+        </ion-item>
+
+        <!-- CSV File List -->
+        <ng-container *ngIf="selectedFiles.length > 0">
+          <ion-list>
+            <ng-container *ngFor="let file of selectedFiles; let i = index">
+              <ion-item>
+                <ion-label>{{ file.name }}</ion-label>
+                <ion-button fill="clear" slot="end" (click)="removeCsvFile(i)">
+                  <img src="assets/icon/x.png" alt="Close" class="remove-icon" />
+                </ion-button>
+              </ion-item>
+            </ng-container>
+          </ion-list>
+        </ng-container>
+
+        <!-- PDF Input + Dropdown inline -->
+        <ion-grid class="pdf-inline-grid">
+          <ion-row>
+
+            <!-- PDF INPUT - kiri -->
+            <ion-col class="pdf-input-col">
+              <ion-item lines="none" class="small-item">
+                <ion-label position="stacked" class="small-label">Choose PDF</ion-label>
+                <input
+                  type="file"
+                  accept=".pdf"
+                  multiple
+                  (change)="onPdfSelected($event)"
+                  class="inline-input"
+                />
+              </ion-item>
+            </ion-col>
+
+        <ion-col class="pdf-type-col">
+          <div class="pdf-type-wrapper">
+            <!-- Label + Icon -->
+            <div class="label-with-icon">
+            <span clas="">PDF Type</span>
+            <img
+              src="assets/icon/info.png"
+              class="info-icon"
+              (mouseover)="showTooltip($event)"
+              (mouseout)="hideTooltip()"
+            />
+            </div>
+            <!-- Dropdown -->
+            <ion-select [(ngModel)]="pdfType" placeholder="Type" class="inline-select">
+              <ion-select-option value="normal">Individual(Normal)</ion-select-option>
+              <ion-select-option value="entry">Individual(ENTRY)</ion-select-option>
+            </ion-select>
+          </div>
+        </ion-col>
+        </ion-row>
+        </ion-grid>
+
+
+
+        <!-- PDF File List -->
+        <ng-container *ngIf="pdfFiles.length > 0">
+          <ion-list>
+            <ng-container *ngFor="let file of pdfFiles; let i = index">
+              <ion-item>
+                <ion-label>{{ file.name }}</ion-label>
+                <ion-button fill="clear" slot="end" (click)="removePdfFile(i)">
+                  <img src="assets/icon/x.png" alt="Close" class="remove-icon" />
+                </ion-button>
+              </ion-item>
+            </ng-container>
+          </ion-list>
+        </ng-container>
+
+        <!-- Upload Button -->
+        <ion-button
+          expand="block"
+          class="upload mt-3"
+          (click)="uploadAll()"
+          [disabled]="(!selectedFiles.length && !pdfFiles.length) || loading">
+          Process & Upload
+        </ion-button>
+      </ion-card-content>
+
+    </ion-card>
+
+    <!-- Loading -->
+    <app-loading-progress
+      [show]="loading"
+      [progress]="progress"
+      [message]="loadingMessage">
+    </app-loading-progress>
+
+    <br>
+
+    <!-- Filter Bulan + Plaza -->
+    <div class="month-filter-section mt-3 animate-fade">
+      <!-- Dropdown Bulan -->
+      <ion-item lines="none">
+        <ion-label position="stacked">Pilih Bulan / Choose Month</ion-label>
+        <ion-select
+          [(ngModel)]="selectedMonth"
+          (ionChange)="onMonthChange()"
+          interface="action-sheet"
+          placeholder="Pilih bulan...">
+          <ion-select-option *ngFor="let month of monthOptions" [value]="month.value">
+            {{ month.label }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <!-- Dropdown Plaza -->
+      <ion-item lines="none">
+        <ion-label position="stacked">Pilih Plaza / Choose Plaza</ion-label>
+<ion-select [(ngModel)]="selectedPlaza" (ionChange)="onPlazaChange()" placeholder="Pilih Plaza">
+  <ion-select-option *ngFor="let plaza of plazaOptions" [value]="plaza">
+    {{ plaza }}
+  </ion-select-option>
+</ion-select>
+      </ion-item>
+    </div>
+
+        <!-- Dashboard Section -->
+    <ng-container *ngIf="!loading">
+      <div class="dashboard-section mt-3">
+        <ion-item lines="none">
+          <ion-label>Data Dashboard:</ion-label>
+          <ion-button fill="outline" color="warning " (click)="openDashboard()">
+            Open Dashboard
+          </ion-button>
+        </ion-item>
+      </div>
+    </ng-container>
+
+    <!-- Payment Summary Card -->
+    <ion-card class="upload-card payment-summary-card mt-3 animate-fade">
+      <ion-card-header>
+        <ion-card-title>Tarikh & Mod Bayaran (Bulan Ini)</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content class="payment-summary-content">
+        <ion-list lines="none">
+          <ion-item class="summary-header">
+            <ion-label>Tarikh</ion-label>
+            <ion-label class="icon-cell">TNG</ion-label>
+            <ion-label class="icon-cell">RFID</ion-label>
+            <ion-label class="icon-cell">ABTC</ion-label>
+            <ion-label class="icon-cell">CSC</ion-label>
+            <ion-label class="icon-cell">ABT</ion-label>
+            <ion-label class="icon-cell">ENTRY STG</ion-label>
+          </ion-item>
+
+          <!-- Loading -->
+          <ng-container *ngIf="loadingRecords">
+            <ion-item>
+              <ion-label>Loading...</ion-label>
+            </ion-item>
+          </ng-container>
+
+          <!-- Table Rows -->
+          <ng-container *ngIf="!loadingRecords">
+            <ng-container *ngIf="dateSummaries.length > 0; else noRecords">
+              <ng-container *ngFor="let item of dateSummaries; let i = index">
+                <ion-item>
+                  <ion-label>{{ item.date | date:'dd MMM yyyy' }}</ion-label>
+
+                  <ion-label class="icon-cell">
+                    <img *ngIf="item.hasTNG" src="assets/icon/tick.png" class="tick-icon" />
+                  </ion-label>
+
+                  <ion-label class="icon-cell">
+                    <img *ngIf="item.hasRFID" src="assets/icon/tick.png" class="tick-icon" />
+                  </ion-label>
+
+                  <ion-label class="icon-cell">
+                    <img *ngIf="item.hasABTC" src="assets/icon/tick.png" class="tick-icon" />
+                  </ion-label>
+
+                  <ion-label class="icon-cell">
+                    <img *ngIf="item.hasCSC" src="assets/icon/tick.png" class="tick-icon" />
+                    <div class="jobno" *ngIf="item.jobNoCSC?.length">
+                      {{ item.jobNoCSC }}
+                    </div>
+                  </ion-label>
+
+                  <ion-label class="icon-cell">
+                    <img *ngIf="item.hasABT" src="assets/icon/tick.png" class="tick-icon" />
+                    <div class="jobno" *ngIf="item.jobNoABT?.length">
+                      {{ item.jobNoABT }}
+                    </div>
+                  </ion-label>
+
+                  <ion-label class="icon-cell">
+                    <img *ngIf="item.hasENTRYCSC" src="assets/icon/tick.png" class="tick-icon" />
+                    <div class="jobno" *ngIf="item.jobNoENTRYCSC?.length">
+                      {{ item.jobNoENTRYCSC }}
+                    </div>
+                  </ion-label>
+
+                </ion-item>
+              </ng-container>
+            </ng-container>
+
+            <ng-template #noRecords>
+              <ion-item>
+                <ion-label>No Record..</ion-label>
+              </ion-item>
+            </ng-template>
+          </ng-container>
+
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <br> <br> <br> <br>
+  </div>
+</ion-content>
+<div
+  *ngIf="showNotificationBell"
+  class="notification-fab"
+  (click)="openNotification()"
+>
+  <img src="assets/icon/bell.png" class="bell">
+  <span class="badge" *ngIf="notificationCount > 0">
+    {{ notificationCount }}
+  </span>
+</div>
+
+<!-- Notification Modal -->
+<ion-modal [isOpen]="showNotificationModal" (didDismiss)="showNotificationModal = false" class="modal modal-blur" (click)="closeModal($event)">
+
+
+    <ion-grid class="modal-grid">
+      <ion-row class="modal-row">
+        <ion-col size="12" class="modal-col">
+
+            <div *ngIf="notificationMessage.csvDates.length || notificationMessage.pdfDates.length; else allUploaded" class="scroll-body modal-inner">
+
+              <!-- CSV Missing -->
+              <div *ngIf="notificationMessage.csvDates.length" class="missing-section">
+                <div class="section-header csv-header">
+                    <img src="assets/icon/ucsv.png" alt="UCSV Icon" class="custom-icon">
+                    <h3>Not upload</h3>
+                    <h2>CSV (TNG, RFID, ABTC)</h2>
+                </div>
+                <p class="dates-list">{{ notificationMessage.csvDates.join(', ') }}</p>
+              </div>
+
+              <!-- PDF Missing -->
+              <div *ngIf="notificationMessage.pdfDates.length" class="missing-section">
+                <div class="section-header pdf-header">
+                  <img src="assets/icon/updf.png" alt="UCSV Icon" class="custom-icon">
+                  <h3>Not upload</h3>
+                  <h2>PDF (CSC, ABT)</h2>
+                </div>
+                <p class="dates-list">{{ notificationMessage.pdfDates.join(', ') }}</p>
+              </div>
+              <!-- PDF Missing JobNo -->
+              <div *ngIf="notificationMessage.pdfMissingJobs.length" class="missing-section">
+                <div class="section-header pdf-header">
+                  <img src="assets/icon/updf.png" class="custom-icon">
+                  <h3>Missing JobNo</h3>
+                  <h2>PDF (CSC, ABT)</h2>
+                </div>
+
+                <div *ngFor="let item of notificationMessage.pdfMissingJobs">
+                  <p class="dates-list">
+                    JobNo {{ item.missingJobNos.join(', ') }}<br>
+                    Date: {{ item.date }}
+                  </p>
+                </div>
+              </div>
+
+            </div>
+
+            <ng-template #allUploaded>
+              <div class="all-uploaded">
+                <ion-icon name="checkmark-circle-outline" class="success-icon"></ion-icon>
+                <p>All uploads are complete</p>
+              </div>
+            </ng-template>
+
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+</ion-modal>
+
+
+<div id="global-tooltip" class="global-tooltip">
+  <div class="tooltip-title">PDF Type Info</div>
+
+  <div class="tooltip-section">
+    <b><i>Individual (Normal)</i></b><br>
+    Individual Transaction yang mempunyai data exit ABT dan CSC
+  </div>
+
+  <div class="tooltip-section">
+    <b><i>Individual (ENTRY)</i></b><br>
+    Individual Transaction (ENTRY) yang mempunyai data ENTRY CSC
+  </div>
+</div>
+
+

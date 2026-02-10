@@ -1,0 +1,51 @@
+<app-header></app-header>
+
+<ion-content fullscreen class="ion-padding background">
+  <div class="center-container">
+    <!-- File Inputs -->
+    <ion-card class="upload-card animate-fade">
+      <ion-card-header>
+        <ion-card-title>Upload Data</ion-card-title>
+        <ion-card-subtitle>CSV & PDF Combined Upload</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="file-section">
+          <!-- CSV Input -->
+          <ion-item lines="none">
+            <ion-label position="stacked">Please choose CSV</ion-label>
+            <input type="file" (change)="onFileSelected($event)" multiple accept=".csv" />
+          </ion-item>
+
+          <!-- PDF Input -->
+          <ion-item lines="none" class="mt-2">
+            <ion-label position="stacked">Please choose PDF</ion-label>
+            <input type="file" (change)="onPdfSelected($event)" multiple accept=".pdf" />
+          </ion-item>
+
+          <!-- Combined Upload Button -->
+          <ion-button expand="block" color="primary" (click)="uploadAll()"
+                      [disabled]="!selectedFiles.length && !pdfFiles.length || loading" class="mt-3">
+            Process & Upload
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Loading -->
+    <app-loading-progress
+      [show]="loading"
+      [progress]="progress"
+      [message]="'Uploading data...'">
+    </app-loading-progress>
+
+<!-- Dashboard -->
+<div *ngIf="!loading" class="dashboard-section mt-3">
+  <ion-item lines="none">
+    <ion-label>Data Dashboard:</ion-label>
+    <ion-button fill="outline" color="light" (click)="openDashboard()">
+      Open Dashboard
+    </ion-button>
+  </ion-item>
+</div>
+</div>
+</ion-content>

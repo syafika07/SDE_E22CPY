@@ -1,0 +1,12 @@
+<div *ngIf="show" class="loading-overlay">
+  <!-- Spinner -->
+  <ion-spinner name="crescent"></ion-spinner>
+
+  <!-- Loading message -->
+  <p>{{ message }}</p>
+
+  <!-- Progress bar -->
+  <div class="progress-container">
+    <div class="progress-bar" [style.width.%]="progress"></div>
+  </div>
+</div>

@@ -1,0 +1,106 @@
+/*
+ * App Global CSS
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+/* Core CSS required for Ionic components to work properly */
+@import "@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+
+/* Optional CSS utils that can be commented out */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+/**
+ * Ionic Dark Mode
+ * -----------------------------------------------------
+ * For more info, please see:
+ * https://ionicframework.com/docs/theming/dark-mode
+ */
+
+ @import "@ionic/angular/css/palettes/dark.always.css";
+ @import "@ionic/angular/css/palettes/dark.class.css";
+@import '@ionic/angular/css/palettes/dark.system.css';
+@import 'quill/dist/quill.snow.css';
+
+/* ===== Legendary global dark scroll for ion-content ===== */
+ion-content {
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(48, 48, 48, 0.7) transparent;
+
+  /* Chrome, Edge, Safari */
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent; /* track invisible */
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(48, 48, 48, 0.7); /* dark thumb */
+    border-radius: 3px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(20, 20, 20, 0.9); /* darker on hover */
+    transform: scaleX(1.5);
+  }
+
+  position: relative;
+  overflow: overlay;
+}
+
+/* Invisible until hover */
+ion-content:not(:hover)::-webkit-scrollbar-thumb {
+  background-color: transparent;
+}
+app-add-info.ion-padding,
+app-edit-info.ion-padding,
+app-tv-display.ion-padding {
+  --padding-start: 0px !important;
+  --padding-end: 0px !important;
+  --padding-top: 0px !important;
+  --padding-bottom: 0px !important;
+  padding: 0 !important;
+}
+
+.custom-session-alert{
+  font-style: italic !important;
+  display: block !important;
+  margin-top: 4px !important;
+}
+
+/* Center seluruh kotak alert horizontal + vertical */
+.custom-session-alert {
+  display: flex !important;
+  justify-content: center !important; /* horizontal center */
+  align-items: center !important;     /* vertical center */
+}
+
+/* Adjust width alert box */
+.custom-session-alert .alert-wrapper {
+  max-width: 400px !important; /* sesuaikan ikut skrin */
+  width: 90% !important;       /* responsive */
+}
+app-edit-profile.ion-page {
+  --background: transparent !important;
+}
+

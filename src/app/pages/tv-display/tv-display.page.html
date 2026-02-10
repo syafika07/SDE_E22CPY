@@ -1,0 +1,92 @@
+<!-- Header utama di luar fullscreen container -->
+<app-header2 class="tv-display-header"></app-header2>
+
+<!-- Container yang boleh fullscreen -->
+<div #fullscreenTarget class="fullscreen-target">
+  <ion-content #tvContent class="tv-display">
+
+    <!-- Header + Tarikh + Countdown -->
+    <div class="header">
+      <div class="header-center">
+        <div class="current-date header-date">
+          {{ days.length > 0 ? formatDate(days[currentDayIndex]) : '' }}
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="current-time-date">
+          <div class="current-date-today">{{ currentDayName }}, {{ currentDateFormatted }}</div>
+          <div class="current-time">{{ currentTime }}</div>
+        </div>
+        <!--<div class="countdown">Auto next: {{ countdown }}s</div>-->
+      </div>
+    </div>
+
+    <!-- Pengumuman Grid -->
+    <div class="announcement-container">
+      <div class="announcement-grid">
+
+        <!-- Cuti Section -->
+        <div class="ann-section ann-cuti">
+          <h2 class="type-title">Cuti</h2>
+          <ul class="ann-list">
+            @if (getAnnouncementsByType(days[currentDayIndex], 'Cuti').length > 0) {
+              @for (ann of getAnnouncementsByType(days[currentDayIndex], 'Cuti'); track trackByAnnouncementId($index, ann)) {
+                <li class="ann-item cuti-item">
+                  <span class="cuti-name">{{ ann.nama }}</span>
+                  <span class="cuti-space">&nbsp;&nbsp;</span>
+                  <span class="cuti-type">{{ ann.jenis_cuti }}</span>
+                </li>
+              }
+            } @else {
+              <li class="empty"><em>Tiada Staff Cuti</em></li>
+            }
+          </ul>
+        </div>
+
+        <!-- Meeting Section -->
+        <div class="ann-section ann-meeting">
+          <h2 class="type-title">Meeting</h2>
+          <ul class="ann-list">
+            @if (getAnnouncementsByType(days[currentDayIndex], 'Meeting').length > 0) {
+              @for (ann of getAnnouncementsByType(days[currentDayIndex], 'Meeting'); track trackByAnnouncementId($index, ann)) {
+                <li class="ann-item">
+                  <strong class="ann-title">{{ ann.title }}</strong>
+                  @if (ann.location) {
+                    <p class="ann-location">@ {{ ann.location }}</p>
+                     <p class="ann-name">{{ ann.nama }}</p>
+
+                  }
+                  <p class="ann-datetime">{{ formatDateTime(ann.datetime) }}</p>
+                </li>
+              }
+            } @else {
+              <li class="empty"><em>Tiada Meeting</em></li>
+            }
+          </ul>
+        </div>
+
+        <!-- Hebahan Section (Slider) -->
+        <div class="ann-section ann-hebahan hebahan-content">
+          <h2 class="type-title">Hebahan Dan Info</h2>
+          <ul class="ann-list">
+            @if (hebahanList.length > 0 && hebahanList[hebahanIndex]) {
+              <li class="ann-item">
+                <strong class="ann-title">{{ hebahanList[hebahanIndex].title }}</strong>
+                @if (hebahanList[hebahanIndex].description) {
+                  <div class="ann-desc" [innerHTML]="getSafeHtml(hebahanList[hebahanIndex].description)"></div>
+                }
+              </li>
+            } @else {
+              <li class="empty"><em>Tiada Hebahan</em></li>
+            }
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Fullscreen Toggle Button -->
+    <button class="fullscreen-bttn" (click)="toggleFullscreen()">⛶</button>
+
+  </ion-content>
+</div>

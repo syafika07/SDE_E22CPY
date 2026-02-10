@@ -1,0 +1,170 @@
+<app-header2></app-header2>
+
+<ion-content class="ion-padding">
+
+  <div class="cards-grid">
+    <!-- Jenis -->
+    <ion-card class="form-card">
+      <ion-item lines="none">
+        <ion-label position="stacked">Jenis</ion-label>
+        <ion-select
+          [(ngModel)]="announcement.ann_type"
+          (ionChange)="onJenisChange($event)"
+          interface="popover"
+          placeholder="Pilih Jenis"
+          class="input-large">
+          <ion-select-option value="Hebahan">Hebahan</ion-select-option>
+          <ion-select-option value="Cuti">Cuti</ion-select-option>
+          <ion-select-option value="Meeting">Meeting</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-card>
+
+    <!-- Title -->
+    @if (announcement.ann_type !== 'Cuti') {
+      <ion-card class="form-card">
+        <ion-item lines="none">
+          <ion-label position="stacked">Title</ion-label>
+          <ion-input
+            [(ngModel)]="announcement.title"
+            placeholder="Masukkan tajuk"
+            class="input-large">
+          </ion-input>
+        </ion-item>
+      </ion-card>
+    }
+
+    <!-- Jenis Cuti -->
+    @if (announcement.ann_type === 'Cuti') {
+      <ion-card class="form-card">
+        <ion-item lines="none">
+          <ion-label position="stacked">Jenis Cuti</ion-label>
+          <ion-input
+            [(ngModel)]="announcement.jenisCuti"
+            placeholder="Contoh: Cuti Sakit, Cuti Tahunan"
+            class="input-large">
+          </ion-input>
+        </ion-item>
+      </ion-card>
+    }
+
+    <!-- Nama -->
+    @if (['Cuti','Meeting'].includes(announcement.ann_type)) {
+      <ion-card class="form-card">
+        <ion-item lines="none">
+          <ion-label position="stacked">Nama</ion-label>
+          <ion-input
+            [(ngModel)]="announcement.currentNama"
+            (keydown.enter)="addNama(); $event.preventDefault()"
+            placeholder="Taip & tekan Enter"
+            class="input-large">
+          </ion-input>
+        </ion-item>
+        <div class="chips-container">
+          @for (n of announcement.namaList; track n + $index; let i = $index) {
+            <ion-chip color="primary" class="name-chip">
+              <ion-label>{{ n }}</ion-label>
+              <ion-icon
+                name="close-circle"
+                (click)="removeNama(i)"
+                style="cursor:pointer"
+                slot="end">
+              </ion-icon>
+            </ion-chip>
+          }
+        </div>
+      </ion-card>
+    }
+
+    <!-- Location -->
+    @if (announcement.ann_type === 'Meeting') {
+      <ion-card class="form-card">
+        <ion-item lines="none">
+          <ion-label position="stacked">Location</ion-label>
+          <ion-input
+            [(ngModel)]="announcement.location"
+            placeholder="Contoh: Bilik Mesyuarat A"
+            class="input-large">
+          </ion-input>
+        </ion-item>
+      </ion-card>
+    }
+
+    <!-- Tarikh & Masa (Pemilih) -->
+    <ion-card class="form-card">
+      <ion-item lines="none">
+        <ion-label position="stacked">Tarikh & Masa</ion-label>
+        <ion-button
+          expand="block"
+          fill="outline"
+          color="primary"
+          (click)="openDatetimeModal()"
+          class="date-button">
+          Pilih Tarikh & Masa
+        </ion-button>
+      </ion-item>
+    </ion-card>
+
+  <!-- Tarikh Terpilih -->
+  @if (announcement.dates.length > 0) {
+    <ion-card class="form-card selected-dates-card">
+      <ion-item lines="none">
+        <ion-label>
+          <b>Terpilih ({{ announcement.dates.length }}):</b>
+          <div class="chips-container">
+            @for (dt of announcement.dates; track $index; let i = $index) {
+            <ion-chip color="success" class="date-chip">
+              <ion-label>{{ dt }}</ion-label>
+              <img
+                src="assets/icon/x.png"
+                alt="Remove"
+                (click)="removeDate(i)"
+                class="remove-icon"
+              />
+            </ion-chip>
+            }
+          </div>
+        </ion-label>
+      </ion-item>
+    </ion-card>
+  }
+  </div>
+
+  <!-- Description (Quill) -->
+  @if (announcement.ann_type !== 'Cuti') {
+    <ion-card class="form-card description-card">
+      <ion-card-header class="ion-no-padding">
+        <ion-card-title class="desc-title">Description</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <quill-editor
+          #quillEditor
+          [modules]="quillModules"
+          placeholder="Taip penerangan (contoh: **bold**, *italic*, - senarai)"
+          class="quill-editor-custom">
+        </quill-editor>
+      </ion-card-content>
+    </ion-card>
+  }
+
+  <!-- Butang Simpan & Reset -->
+  <div class="button-group">
+    <ion-button
+      expand="block"
+      [disabled]="isSaving || !isFormValid()"
+      (click)="save()"
+      class="btn-save">
+      {{ isSaving ? 'Menyimpan...' : ' Simpan' }}
+    </ion-button>
+    <ion-button
+      expand="block"
+      fill="outline"
+      color="medium"
+      (click)="resetForm()"
+      [disabled]="isSaving"
+      class="btn-reset">
+      Reset
+    </ion-button>
+  </div>
+
+</ion-content>

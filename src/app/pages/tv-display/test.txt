@@ -1,0 +1,658 @@
+import { Component, OnInit, ElementRef, ViewChild, HostListener, OnDestroy } from '@angular/core';
+import { Subscription, timer } from 'rxjs';
+import { SupabaseService, Announcement } from 'src/app/services/supabase.service';
+import { Header2Component } from 'src/app/components/header2/header2.component';
+import { IonContent } from '@ionic/angular/standalone';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { NGXLogger } from 'ngx-logger';
+
+@Component({
+  selector: 'app-tv-display',
+  templateUrl: './tv-display.page.html',
+  styleUrls: ['./tv-display.page.scss'],
+  standalone: true,
+  imports: [Header2Component, IonContent],
+  providers: [SupabaseService]
+})
+export class TvDisplayPage implements OnInit, OnDestroy {
+  currentTime = '';
+  currentDayName = '';
+  currentDateFormatted = '';
+
+  @ViewChild('fullscreenTarget', { static: true }) fullscreenTarget!: ElementRef;
+  @ViewChild(IonContent, { static: false }) ionContent!: IonContent;
+
+  list: Announcement[] = [];
+  days: Date[] = [];
+  currentDayIndex = 0;
+
+  countdown = 0;
+  timerSubscription!: Subscription;
+
+  isFullscreen = false;
+  controlsVisible = true;
+  hideControlsTimer: any;
+
+  // Hebahan
+  hebahanList: Announcement[] = [];
+  hebahanIndex: number = 0;
+
+  // Auto scroll
+  private scrollInterval: any;
+  private isScrolling = false;
+  private holdTimer: any;
+  private scrollAnimationFrame: number | null = null;
+
+  // Intervals untuk cleanup
+  private loadAnnouncementsInterval: any;
+  private checkNewDayInterval: any;
+  private dateTimeInterval: any;
+  private check6amInterval: any; // ✅ Baru: auto-refresh pada 6 pagi
+  private isAutoFlowActive = false;
+
+  // 🔒 Lock untuk elak race condition
+  private isTransitioning = false;
+
+  // ✅ Cache config
+  private readonly CACHE_KEY = 'tv_announcements_cache';
+
+  constructor(
+    private supabase: SupabaseService,
+    private sanitizer: DomSanitizer,
+    private logger: NGXLogger
+  ) {}
+
+  ngOnInit() {
+    this.generateDays();
+    this.loadAnnouncements();
+    this.startHideControlsTimer();
+    this.startDateTimeTimer();
+    this.logNext6am(); // ✅ Debug info
+
+    // 🔁 Refresh setiap 30 saat (biasa)
+    this.loadAnnouncementsInterval = setInterval(() => this.loadAnnouncements(), 30000);
+    // 📅 Check new day setiap minit
+    this.checkNewDayInterval = setInterval(() => this.checkNewDay(), 60000);
+    // ⏰ Check for 6am refresh setiap 10 saat
+    this.check6amInterval = setInterval(() => this.checkAndMaybeRefreshAt6am(), 10000);
+  }
+
+  ngOnDestroy() {
+    this.timerSubscription?.unsubscribe();
+    this.stopAutoScroll();
+    clearTimeout(this.hideControlsTimer);
+    clearTimeout(this.holdTimer);
+    clearInterval(this.loadAnnouncementsInterval);
+    clearInterval(this.checkNewDayInterval);
+    clearInterval(this.dateTimeInterval);
+    clearInterval(this.check6amInterval); // ✅ Cleanup
+  }
+
+  /* ===============================
+     CACHE UTILITIES
+  =============================== */
+  private getCachedData(): { data: Announcement[]; timestamp: number } | null {
+    try {
+      const raw = localStorage.getItem(this.CACHE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (typeof parsed.timestamp !== 'number' || !Array.isArray(parsed.data)) {
+        localStorage.removeItem(this.CACHE_KEY);
+        return null;
+      }
+      return parsed;
+    } catch (e) {
+      this.logger.warn('Error reading cache, clearing it:', e);
+      localStorage.removeItem(this.CACHE_KEY);
+      return null;
+    }
+  }
+
+  private setCachedData(data: Announcement[]) {
+    try {
+      const cache = {
+        data,
+        timestamp: Date.now()
+      };
+      localStorage.setItem(this.CACHE_KEY, JSON.stringify(cache));
+    } catch (e) {
+      this.logger.error('Failed to set cache:', e);
+    }
+  }
+
+  // ✅ Kira bila 6 pagi akan datang seterusnya
+  private getNext6amTimestamp(): number {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const date = now.getDate();
+
+    const today6am = new Date(year, month, date, 6, 0, 0, 0).getTime();
+    const tomorrow6am = new Date(year, month, date + 1, 6, 0, 0, 0).getTime();
+
+    return now.getTime() >= today6am ? tomorrow6am : today6am;
+  }
+
+  private logNext6am() {
+    const next6am = new Date(this.getNext6amTimestamp());
+    this.logger.debug(`[6am Refresh] Next scheduled at:`, next6am.toLocaleString('ms-MY'));
+  }
+
+  /* ===============================
+     6AM AUTO-REFRESH LOGIC
+  =============================== */
+  private checkAndMaybeRefreshAt6am() {
+    const now = new Date();
+    const is6amWindow = now.getHours() === 6 && now.getMinutes() === 0 && now.getSeconds() < 10;
+
+    if (!is6amWindow) return;
+
+    const isOnline = navigator.onLine;
+    const lastRefreshKey = 'last_6am_refresh';
+    const todayStr = now.toISOString().split('T')[0]; // '2025-12-31'
+
+    if (!isOnline) {
+      this.logger.warn('[6am Refresh] Offline — skipping refresh');
+      return;
+    }
+
+    const lastRefresh = localStorage.getItem(lastRefreshKey);
+    if (lastRefresh === todayStr) {
+      this.logger.info('[6am Refresh] Already refreshed today');
+      return;
+    }
+
+    this.logger.info('[6am Refresh] Triggering daily refresh...');
+    this.loadAnnouncements(true) // ✅ force fetch
+      .then(() => {
+        localStorage.setItem(lastRefreshKey, todayStr);
+        this.logger.info(`[6am Refresh] ✅ Completed for ${todayStr}`);
+      })
+      .catch(err => {
+        this.logger.error('[6am Refresh] ❌ Failed, will retry if online later', err);
+      });
+  }
+
+  /* ===============================
+     LOAD ANNOUNCEMENTS
+  =============================== */
+async loadAnnouncements(forceFetch = false) {
+  const cached = this.getCachedData();
+  const isOnline = navigator.onLine;
+
+  let shouldFetch = forceFetch;
+
+  // Jika tiada cache langsung, mesti fetch (jika online)
+  if (!cached) {
+    shouldFetch = true;
+  }
+  // Jika ada cache & online & tidak force, semak expired berdasarkan 6am
+  else if (isOnline && !forceFetch) {
+    const cacheExpiryTime = this.getNext6amTimestamp() - 24 * 60 * 60 * 1000; // 6am hari ini
+    shouldFetch = cached.timestamp < cacheExpiryTime;
+  }
+
+  // ✅ Sekarang `cached` pasti wujud jika `!shouldFetch`
+  if (shouldFetch && isOnline) {
+    try {
+      const res: any[] = await this.supabase.getAnnouncements();
+      this.list = this.normalizeAnnouncements(res);
+      this.setCachedData(this.list);
+      this.logger.info('✅ Fresh data loaded & cached');
+    } catch (err) {
+      this.logger.error('❌ Fetch failed — using fallback', err);
+      this.list = cached?.data || []; // fallback: guna cache jika ada, atau []
+    }
+  } else {
+    // Jaminan: jika sampai sini & cached null, list = []
+    this.list = cached?.data || [];
+    this.logger.info('📦 Using cached data (offline / not expired / no cache)');
+  }
+
+  this.resetDay();
+  this.startSlideTimer();
+}
+
+  private normalizeAnnouncements(res: any[]): Announcement[] {
+    return (res || []).map(ann => {
+      const typeValue = ann.type || ann.ann_type || 'Hebahan';
+      const datetimeValue = Array.isArray(ann.datetime)
+        ? ann.datetime[0]
+        : (ann.datetime || '');
+      return {
+        ...ann,
+        ann_type: typeValue as 'Cuti' | 'Hebahan' | 'Meeting',
+        datetime: datetimeValue
+      };
+    });
+  }
+
+  getAnnouncementsByType(day: Date, type: 'Cuti' | 'Hebahan' | 'Meeting'): Announcement[] {
+    const dayKey = this.getLocalDateString(day);
+    return this.list.filter(a => {
+      if (!a.datetime) return false;
+      const announcementDate = new Date(a.datetime);
+      const dtKey = this.getLocalDateString(announcementDate);
+      return a.ann_type === type && dtKey === dayKey;
+    });
+  }
+
+  // ✅ ✅ ✅ UTC-BASED — ELAK TIMEZONE DRIFT ✅ ✅ ✅
+  private getLocalDateString(date: Date): string {
+    const utcYear = date.getUTCFullYear();
+    const utcMonth = date.getUTCMonth();
+    const utcDay = date.getUTCDate();
+    return `${utcYear}-${String(utcMonth + 1).padStart(2, '0')}-${String(utcDay).padStart(2, '0')}`;
+  }
+
+  trackByAnnouncementId(index: number, announcement: Announcement): any {
+    return announcement.id || announcement.title || index;
+  }
+
+  getSafeHtml(html?: string): SafeHtml {
+    if (!html) return '';
+    return this.sanitizer.bypassSecurityTrustHtml(html);
+  }
+
+  formatDateTime(dt?: string) {
+    if (!dt) return '';
+    const d = new Date(dt);
+    return d.toLocaleString('ms-MY', {
+      weekday: 'short',
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  formatDate(date?: Date) {
+    if (!date) return '';
+    return date.toLocaleDateString('ms-MY', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  }
+
+  generateDays() {
+    this.days = [];
+    const now = new Date();
+    const year = now.getUTCFullYear();
+    const month = now.getUTCMonth();
+    const date = now.getUTCDate();
+
+    const todayUTC = Date.UTC(year, month, date);
+    const dayOfWeek = new Date(todayUTC).getUTCDay(); // 0=Ahad, 1=Isnin
+    const daysUntilMonday = dayOfWeek === 0 ? -6 : (1 - dayOfWeek);
+
+    const mondayUTC = todayUTC + daysUntilMonday * 24 * 60 * 60 * 1000;
+
+    for (let i = 0; i < 5; i++) {
+      const dayUTC = mondayUTC + i * 24 * 60 * 60 * 1000;
+      this.days.push(new Date(dayUTC));
+    }
+
+    this.logger.log('[generateDays] UTC-based:', this.days.map(d => d.toISOString().split('T')[0]));
+  }
+
+  /* ===============================
+     SLIDE TIMER / COUNTDOWN
+  =============================== */
+  startSlideTimer() {
+    this.timerSubscription?.unsubscribe();
+    this.timerSubscription = timer(0, 1000).subscribe(() => {
+      if (!this.isScrolling && this.countdown > 0 && !this.isTransitioning) {
+        this.countdown--;
+        if (this.countdown <= 0) {
+          this.nextHebahanOrDay();
+        }
+      }
+    });
+  }
+
+  resetDay() {
+    this.isAutoFlowActive = true;
+
+    this.hebahanList = this.getAnnouncementsByType(
+      this.days[this.currentDayIndex],
+      'Hebahan'
+    );
+
+    this.hebahanIndex = Math.max(
+      0,
+      Math.min(this.hebahanIndex, this.hebahanList.length - 1)
+    );
+
+    this.scrollToTop();
+
+    setTimeout(() => this.startHebahanDisplay(), 300);
+  }
+
+  /* ===============================
+     HEBAHAN DISPLAY
+  =============================== */
+  private async startHebahanDisplay() {
+    if (this.isTransitioning) return;
+    this.stopAutoScroll();
+
+    if (!this.hebahanList || this.hebahanList.length === 0) {
+      this.countdown = 20;
+      return;
+    }
+
+    if (!this.ionContent) return;
+
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    try {
+      const contentEl = await this.ionContent.getScrollElement();
+      if (!contentEl) return;
+
+      const scrollableHeight = contentEl.scrollHeight - contentEl.clientHeight;
+
+      if (scrollableHeight <= 5) {
+        this.countdown = 20;
+      } else {
+        await this.startScrollSequence(scrollableHeight);
+      }
+    } catch (err) {
+      this.logger.warn('startHebahanDisplay fallback to 20s:', err);
+      this.countdown = 20;
+    }
+  }
+
+  private async startScrollSequence(scrollableHeight: number) {
+    this.isScrolling = true;
+    this.countdown = 0;
+
+    try {
+      this.logger.log(`[Scroll] Day ${this.currentDayIndex}, Hebahan ${this.hebahanIndex}`);
+
+      const scrollDuration = 18000;
+      await this.performSmoothScroll(scrollableHeight, scrollDuration);
+
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      if (this.ionContent) await this.ionContent.scrollToTop(300);
+      await new Promise(resolve => setTimeout(resolve, 300));
+    } catch (error) {
+      this.logger.error('[Scroll] Error:', error);
+    } finally {
+      this.isScrolling = false;
+      this.countdown = 0;
+      this.nextHebahanOrDay();
+    }
+  }
+
+  private performSmoothScroll(scrollableHeight: number, durationMs: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const startTime = Date.now();
+
+      const scroll = () => {
+        if (!this.isScrolling || this.isTransitioning) {
+          reject('Scroll cancelled');
+          return;
+        }
+
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / durationMs, 1);
+        const scrollPosition = scrollableHeight * progress;
+
+        if (this.ionContent) {
+          this.ionContent.scrollToPoint(0, scrollPosition, 0);
+        }
+
+        if (progress < 1) {
+          this.scrollAnimationFrame = requestAnimationFrame(scroll);
+        } else {
+          this.scrollAnimationFrame = null;
+          resolve();
+        }
+      };
+
+      this.scrollAnimationFrame = requestAnimationFrame(scroll);
+    });
+  }
+
+  private stopAutoScroll() {
+    if (this.scrollAnimationFrame !== null) {
+      cancelAnimationFrame(this.scrollAnimationFrame);
+      this.scrollAnimationFrame = null;
+    }
+    this.isScrolling = false;
+    this.countdown = 0;
+  }
+
+  /* ===============================
+     TRANSITION (STABIL)
+  =============================== */
+  private nextHebahanOrDay() {
+    if (this.isTransitioning) {
+      this.logger.warn('[Transition] Skipped — already in progress');
+      return;
+    }
+
+    this.stopAutoScroll();
+
+    this.isTransitioning = true;
+    setTimeout(() => (this.isTransitioning = false), 800);
+
+    this.logger.log(
+      `[Transition] Day: ${this.currentDayIndex}, Hebahan: ${this.hebahanIndex}/${this.hebahanList.length}`
+    );
+
+    const hebahanList = this.hebahanList || [];
+
+    if (hebahanList.length === 0) {
+      this.nextDay();
+      return;
+    }
+
+    this.hebahanIndex = Math.max(
+      0,
+      Math.min(this.hebahanIndex, hebahanList.length - 1)
+    );
+
+    if (this.hebahanIndex < hebahanList.length - 1) {
+      this.hebahanIndex++;
+      this.logger.log(`[Transition] Next hebahan: ${this.hebahanIndex}`);
+
+      this.scrollToTop();
+      setTimeout(() => this.startHebahanDisplay(), 300);
+    } else {
+      this.logger.log('[Transition] Habis hebahan → nextDay');
+      this.nextDay();
+    }
+  }
+
+  private async scrollToTop() {
+    if (this.ionContent) {
+      try {
+        await this.ionContent.scrollToTop(300);
+      } catch (e) {
+        this.logger.warn('scrollToTop failed, continuing...');
+      }
+    }
+  }
+
+  nextDay() {
+    const oldIndex = this.currentDayIndex;
+    this.currentDayIndex = (this.currentDayIndex + 1) % this.days.length;
+
+    this.logger.log(`[nextDay] ${oldIndex} → ${this.currentDayIndex}`);
+
+    this.resetDay();
+    if (this.isFullscreen) {
+      setTimeout(() => this.updateFullscreenClass(), 100);
+    }
+  }
+
+  prevDay() {
+    const oldIndex = this.currentDayIndex;
+    this.currentDayIndex = (this.currentDayIndex - 1 + this.days.length) % this.days.length;
+
+    this.logger.log(`[prevDay] ${oldIndex} → ${this.currentDayIndex}`);
+
+    this.resetDay();
+    if (this.isFullscreen) {
+      setTimeout(() => this.updateFullscreenClass(), 100);
+    }
+  }
+
+  pauseSlide() {
+    this.isAutoFlowActive = false;
+    this.timerSubscription?.unsubscribe();
+    this.stopAutoScroll();
+  }
+
+  resumeSlide() {
+    this.isAutoFlowActive = true;
+    this.startSlideTimer();
+    setTimeout(() => {
+      if (!this.isTransitioning) {
+        this.startHebahanDisplay();
+      }
+    }, 100);
+  }
+
+  /* ===============================
+     ✅ UTC-BASED — ELAK TIMEZONE DRIFT
+  =============================== */
+  checkNewDay() {
+    if (this.isAutoFlowActive) return;
+    if (this.isTransitioning || this.isScrolling) return;
+
+    try {
+      const now = new Date();
+      const todayStr = this.getLocalDateString(now);
+      const currentDay = this.days[this.currentDayIndex];
+      if (!currentDay) return;
+
+      const currentDayStr = this.getLocalDateString(currentDay);
+
+      if (todayStr === currentDayStr) return;
+
+      const newDayIndex = this.days.findIndex(day =>
+        this.getLocalDateString(day) === todayStr
+      );
+
+      if (newDayIndex !== -1 && newDayIndex !== this.currentDayIndex) {
+        this.logger.log(
+          `[checkNewDay] Hari berubah: ${this.currentDayIndex} → ${newDayIndex} | ${todayStr}`
+        );
+        this.currentDayIndex = newDayIndex;
+        this.resetDay();
+      }
+    } catch (err) {
+      this.logger.error('[checkNewDay] Error:', err);
+    }
+  }
+
+  /* ===============================
+     CONTROLS
+  =============================== */
+  @HostListener('document:keydown', ['$event'])
+  handleKeydown(event: KeyboardEvent) {
+    if (['ArrowLeft', 'ArrowRight'].includes(event.key) && this.isTransitioning) {
+      event.preventDefault();
+      return;
+    }
+
+    if (event.key === 'Escape' && this.isFullscreen) {
+      this.toggleFullscreen();
+      event.preventDefault();
+    } else if (event.key.toLowerCase() === 'f') {
+      this.toggleFullscreen();
+      event.preventDefault();
+    } else if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      this.prevDay();
+    } else if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      this.nextDay();
+    } else if (event.key === ' ') {
+      event.preventDefault();
+      if (this.timerSubscription && !this.timerSubscription.closed) {
+        this.pauseSlide();
+      } else {
+        this.resumeSlide();
+      }
+    }
+
+    this.showControls();
+  }
+
+  @HostListener('document:mousemove')
+  @HostListener('document:touchstart')
+  showControls() {
+    this.controlsVisible = true;
+    this.startHideControlsTimer();
+  }
+
+  startHideControlsTimer() {
+    clearTimeout(this.hideControlsTimer);
+    this.hideControlsTimer = setTimeout(() => {
+      this.controlsVisible = false;
+    }, 3000);
+  }
+
+  /* ===============================
+     DATE & TIME
+  =============================== */
+  private updateDateTime() {
+    const now = new Date();
+    const daysMY = ['Ahad', 'Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu'];
+    this.currentDayName = daysMY[now.getDay()];
+
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    this.currentDateFormatted = `${pad(now.getDate())}/${pad(now.getMonth() + 1)}/${now.getFullYear()}`;
+    this.currentTime = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+  }
+
+  private startDateTimeTimer() {
+    this.updateDateTime();
+    this.dateTimeInterval = setInterval(() => this.updateDateTime(), 1000);
+  }
+
+  toggleFullscreen() {
+    const elem = this.fullscreenTarget.nativeElement;
+
+    if (!this.isFullscreen) {
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen().catch((err: any) => this.logger.warn('Failed to enter fullscreen', err));
+      } else if ((elem as any).webkitRequestFullscreen) {
+        (elem as any).webkitRequestFullscreen();
+      }
+
+      elem.classList.add('fullscreen');
+      setTimeout(() => this.updateFullscreenClass(), 50);
+      this.isFullscreen = true;
+    } else {
+      if (document.fullscreenElement || (document as any).webkitFullscreenElement) {
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(err => this.logger.warn('Failed to exit fullscreen', err));
+        } else if ((document as any).webkitExitFullscreen) {
+          (document as any).webkitExitFullscreen();
+        }
+      }
+
+      elem.classList.remove('fullscreen', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday');
+      this.isFullscreen = false;
+    }
+  }
+
+  updateFullscreenClass() {
+    const elem = this.fullscreenTarget.nativeElement;
+    const dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+
+    elem.classList.remove(...dayNames);
+
+    if (this.currentDayIndex >= 0 && this.currentDayIndex < dayNames.length) {
+      const newClass = dayNames[this.currentDayIndex];
+      elem.classList.add(newClass);
+      this.logger.log(`[CSS] Updated class: ${newClass}`);
+    }
+  }
+}

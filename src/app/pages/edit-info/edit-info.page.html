@@ -1,0 +1,310 @@
+<app-header2></app-header2>
+
+<!-- ACTION BAR -->
+<div class="action-bar">
+
+  <!-- FILTER KIRI -->
+  <div class="filter-controls">
+
+    <!-- TAHUN -->
+    <ion-select
+      interface="popover"
+      placeholder="Tahun"
+      [(ngModel)]="selectedYear"
+      (ionChange)="onYearChange()"
+      [disabled]="availableYears.length === 0">
+      <ion-select-option *ngFor="let y of availableYears" [value]="y">
+        {{ y }}
+      </ion-select-option>
+    </ion-select>
+
+    <!-- BULAN -->
+    <ion-select
+      interface="popover"
+      placeholder="Bulan"
+      [(ngModel)]="selectedMonth"
+      (ionChange)="onMonthChange()"
+      [disabled]="availableMonths.length === 0">
+      <ion-select-option *ngFor="let m of availableMonths" [value]="m.value">
+        {{ m.label }}
+      </ion-select-option>
+    </ion-select>
+
+    <!-- MINGGU -->
+    <ion-select
+      interface="popover"
+      placeholder="Minggu"
+      [(ngModel)]="selectedWeek"
+      (ionChange)="onWeekChange()"
+      [disabled]="availableWeeks.length === 0">
+      <ion-select-option *ngFor="let w of availableWeeks" [value]="w">
+        Mgg {{ w }}
+      </ion-select-option>
+    </ion-select>
+
+    <!-- JENIS (sentiasa aktif) -->
+    <ion-select
+      interface="popover"
+      placeholder="Jenis"
+      [(ngModel)]="selectedJenis"
+      (ionChange)="onJenisFilterChange()">
+      <ion-select-option value="">Semua</ion-select-option>
+      <ion-select-option value="Cuti">Cuti</ion-select-option>
+      <ion-select-option value="Hebahan">Hebahan</ion-select-option>
+      <ion-select-option value="Meeting">Meeting</ion-select-option>
+    </ion-select>
+
+  </div>
+
+  <!-- DELETE KANAN -->
+  <div class="delete-controls" *ngIf="totalVisibleAnnouncements > 0 || selectMode">
+    <ion-button
+      size="small"
+      color="danger"
+      (click)="toggleSelectMode()">
+      {{ selectMode ? 'Cancel Delete' : 'Delete' }}
+    </ion-button>
+
+    <ion-button
+      *ngIf="selectMode"
+      size="small"
+      fill="outline"
+      color="danger"
+      [disabled]="selectedIds.size === 0"
+      (click)="confirmDelete()">
+      Delete ({{ selectedIds.size }})
+    </ion-button>
+  </div>
+
+</div>
+
+<ion-content class="ion-padding announcements-container">
+
+  <!-- GROUPED ANNOUNCEMENTS -->
+  @for (monthGroup of groupedAnnouncements; track monthGroup) {
+    <div class="month-group">
+      <div class="month-header">
+        <h2 class="month-title">{{ monthGroup.monthLabel }}</h2>
+        @if (selectMode) {
+          <ion-checkbox
+            [checked]="monthGroup.allSelected"
+            (ionChange)="toggleSelectMonth(monthGroup)">
+            Select All Month
+          </ion-checkbox>
+        }
+      </div>
+      @for (weekGroup of monthGroup.weeks; track weekGroup) {
+        <div class="week-group">
+          <div class="week-header">
+            <h3 class="week-title">Minggu {{ weekGroup.week }}</h3>
+            @if (selectMode) {
+              <ion-checkbox
+                [checked]="weekGroup.allSelected"
+                (ionChange)="toggleSelectWeek(weekGroup)">
+                Select All
+              </ion-checkbox>
+            }
+          </div>
+          @for (ann of weekGroup.announcements; track ann) {
+            <ion-card
+              class="announcement-card"
+              [class.selected]="isSelected(ann)"
+              (click)="selectMode ? toggleSelect(ann) : selectAnnouncement(ann)">
+              <ion-item lines="none">
+                <ion-label>
+                  <!-- Jenis -->
+                  <p><strong [ngClass]="ann.ann_type">{{ ann.ann_type }}</strong></p>
+
+                  <!-- Title (jika ada & bukan Cuti) -->
+                  @if (ann.title && ann.ann_type !== 'Cuti') {
+                    <p><strong>Title:</strong> {{ ann.title }}</p>
+                  }
+
+                  <!-- Jenis Cuti (Cuti sahaja) -->
+                  @if (ann.ann_type === 'Cuti' && ann.jenis_cuti) {
+                    <p><strong>Jenis Cuti:</strong> {{ ann.jenis_cuti }}</p>
+                  }
+
+                  <!-- Nama -->
+                  @if (ann.nama) {
+                    <p><strong>Nama:</strong> {{ ann.nama }}</p>
+                  }
+
+                  <!-- Lokasi (Meeting sahaja) -->
+                  @if (ann.ann_type === 'Meeting' && ann.location) {
+                    <p><strong>Location:</strong> {{ ann.location }}</p>
+                  }
+
+                  <!-- Tarikh & Masa (SEMUA) -->
+                  @if (ann.datetime) {
+                    <p><strong>Tarikh & Masa:</strong></p>
+                    <div style="margin-left: 16px; font-size: 0.9em;">
+                      @for (dt of ann._datetimeList; track dt.getTime()) {
+                        <div>{{ dt | date:'dd/MM/yyyy HH:mm' }}</div>
+                      }
+                    </div>
+                  }
+
+                  <!-- Description (Hebahan/Meeting sahaja) -->
+                  @if (ann.ann_type !== 'Cuti' && ann.description) {
+                    <p><strong>Penerangan:</strong></p>
+                    <div [innerHTML]="ann.description"></div>
+                  }
+                </ion-label>
+
+                <!-- Checkbox (select mode only) -->
+                @if (selectMode) {
+                  <ion-checkbox
+                    slot="end"
+                    [checked]="isSelected(ann)"
+                    (click)="$event.stopPropagation()">
+                  </ion-checkbox>
+                }
+              </ion-item>
+            </ion-card>
+          }
+        </div>
+      }
+    </div>
+  }
+</ion-content>
+
+<!-- EDIT POPUP -->
+@if (selectedAnnouncement) {
+  <div class="edit-popup-overlay" (click)="cancelEdit()">
+    <ion-card class="edit-card" (click)="$event.stopPropagation()">
+      <!-- POPUP HEADER -->
+      <div class="popup-header">
+        <h2 class="popup-title">Edit Announcement</h2>
+        <!-- close x.png -->
+        <ion-button fill="clear" (click)="cancelEdit()" class="popup-close-button">
+          <img src="assets/icon/x.png" alt="Close" class="popup-close-icon" />
+        </ion-button>
+      </div>
+
+      <!-- CONTENT -->
+      <ion-card-content>
+        <!-- ANN TYPE -->
+        <ion-item>
+          <ion-label position="stacked">Jenis</ion-label>
+          <ion-select [(ngModel)]="editAnnouncement.ann_type" (ionChange)="onJenisChange()">
+            <ion-select-option value="Cuti">Cuti</ion-select-option>
+            <ion-select-option value="Hebahan">Hebahan</ion-select-option>
+            <ion-select-option value="Meeting">Meeting</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <!-- TITLE -->
+        @if (editAnnouncement.ann_type !== 'Cuti') {
+          <ion-item>
+            <ion-label position="stacked">Title</ion-label>
+            <ion-input [(ngModel)]="editAnnouncement.title"></ion-input>
+          </ion-item>
+        }
+
+        <!-- JENIS CUTI -->
+        @if (editAnnouncement.ann_type === 'Cuti') {
+          <ion-item>
+            <ion-label position="stacked">Jenis Cuti</ion-label>
+            <ion-input [(ngModel)]="editAnnouncement.jenis_cuti"></ion-input>
+          </ion-item>
+        }
+
+        <!-- NAMA (Cuti & Meeting only) -->
+        @if (editAnnouncement.ann_type !== 'Hebahan') {
+          <ion-item>
+            <ion-label position="stacked">Nama</ion-label>
+            <ion-input
+              [(ngModel)]="currentNama"
+              placeholder="Taip & Enter untuk tambah"
+              (keydown.enter)="addNama(); $event.preventDefault()">
+            </ion-input>
+          </ion-item>
+          <div class="chip-container">
+            @for (n of editAnnouncement.namaList; track n; let i = $index) {
+              <ion-chip color="primary">
+                <ion-label>{{ n }}</ion-label>
+                <img
+                  src="assets/icon/x.png"
+                  alt="Remove"
+                  (click)="removeNama(i); $event.stopPropagation()"
+                  style="width:16px; height:16px; cursor:pointer; margin-left:4px;"
+                />
+              </ion-chip>
+            }
+          </div>
+        }
+
+        <!-- LOCATION (Meeting only) -->
+        @if (editAnnouncement.ann_type === 'Meeting') {
+          <ion-item>
+            <ion-label position="stacked">Location</ion-label>
+            <ion-input [(ngModel)]="editAnnouncement.location"></ion-input>
+          </ion-item>
+        }
+
+        <!-- DATETIME -->
+        <ion-item>
+          <ion-label position="stacked">Tarikh & Masa</ion-label>
+          <ion-button expand="block" fill="outline" (click)="openDatetimeModal()">
+            @if (editAnnouncement.dates.length === 0) {
+              Pilih Tarikh & Masa
+            } @else {
+              {{ editAnnouncement.dates.length }} Tarikh Dipilih
+            }
+          </ion-button>
+        </ion-item>
+
+        <!-- Tarikh Terpilih (Preview) -->
+        @if (editAnnouncement.dates.length > 0) {
+          <div class="chip-container">
+            @for (dt of editAnnouncement.dates; track dt; let i = $index) {
+              <ion-chip color="success">
+                <ion-label>{{ convertToDate(dt) | date:'dd/MM/yyyy HH:mm' }}</ion-label>
+                <img
+                  src="assets/icon/x.png"
+                  alt="Remove"
+                  (click)="removeDate(i)"
+                  style="width:16px; height:16px; cursor:pointer; margin-left:4px;"
+                />
+              </ion-chip>
+            }
+          </div>
+        }
+
+        <!-- DESCRIPTION (Hebahan & Meeting only) -->
+        @if (editAnnouncement.ann_type !== 'Cuti') {
+          <ion-item lines="none">
+            <ion-label class="field-label">Description</ion-label>
+          </ion-item>
+          <quill-editor
+            #quillEditor
+            [modules]="quillModules"
+            placeholder="Taip penerangan (contoh: **bold**, *italic*, - senarai)"
+            style="min-height: 300px">
+          </quill-editor>
+        }
+
+        <!-- BUTTONS -->
+        <div class="edit-buttons">
+          <ion-button
+            expand="block"
+            color="primary"
+            (click)="saveEdit()"
+            [disabled]="isSaving || !isFormValid()">
+            {{ isSaving ? 'Menyimpan...' : 'Simpan' }}
+          </ion-button>
+          <ion-button
+            expand="block"
+            fill="outline"
+            color="medium"
+            (click)="cancelEdit()"
+            [disabled]="isSaving">
+            Batal
+          </ion-button>
+        </div>
+
+      </ion-card-content>
+    </ion-card>
+  </div>
+}

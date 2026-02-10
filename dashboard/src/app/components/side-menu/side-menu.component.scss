@@ -1,0 +1,205 @@
+/* ================= MENU BASE ================= */
+ion-menu {
+  --width: 250px;
+  --background: #1f1f1f; /* fixed dark grey */
+  color: #ffffff;         /* font putih */
+  font-family: 'Inter', system-ui, sans-serif;
+  transition: transform 0.3s ease-in-out;
+  text-align: left;
+  box-shadow: 2px 0 12px rgba(0,0,0,0.3);
+  z-index: auto;
+  padding: 0;
+}
+
+/* ================= TOOLBAR ================= */
+ion-toolbar {
+  --background: #1f1f1f;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+}
+
+.menu-header {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* jarak logo dan title */
+}
+
+.menu-logo {
+  height: 200px;
+  width: auto;
+  object-fit: contain;
+}
+
+.menu-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+/* ================= USER INFO ================= */
+.user-info {
+  padding: 16px 12px;
+  background: #1f1f1f;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.user-info .user-name {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #ffffff;
+  margin-bottom: 4px;
+  text-transform: capitalize;
+}
+
+.user-info .user-email {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 2px;
+  word-break: break-word;
+}
+
+.user-info .user-role {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.6);
+  font-weight: 500;
+  text-transform: none;
+}
+
+/* ================= LIST & ITEMS ================= */
+ion-list {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+}
+
+ion-item {
+  --background: transparent;
+  --color: #ffffff;
+  border-radius: 8px;
+  transition: background 0.3s ease, transform 0.2s ease;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  --inner-padding-start: 0;
+}
+
+ion-item ion-label {
+  flex: 1;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+ion-item ion-icon {
+  margin-right: 12px;
+  font-size: 1.3rem;
+  color: #ffffff;
+}
+
+ion-item ion-ripple-effect {
+  --ripple-color: rgba(255,255,255,0.1);
+}
+
+/* Hover Effect */
+ion-item:hover {
+  --background: rgba(255,255,255,0.08);
+  transform: translateX(2px);
+}
+
+/* Active Item */
+ion-item.active {
+  --background: #3a3a3a;
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: inset 4px 0 0 0 #ffd600; /* subtle left accent */
+}
+
+ion-item.active ion-label {
+  color: #ffffff;
+}
+
+ion-item.active ion-icon {
+  color: #ffd600; /* accent for active icon */
+}
+
+ion-item.active ion-ripple-effect {
+  --ripple-color: rgba(255,215,0,0.2);
+}
+
+/* ================= CONTENT ================= */
+ion-content {
+  --background: #1f1f1f;
+  color: #ffffff;
+}
+
+/* ================= RESPONSIVE ================= */
+/* Mobile */
+@media (max-width: 767px) {
+  ion-menu { --width: 200px; }
+  ion-item { font-size: 0.85rem; padding: 10px 14px; }
+  .user-info { padding: 12px 10px; }
+  .user-info .user-name { font-size: 0.95rem; }
+  .user-info .user-email { font-size: 0.8rem; }
+  .user-info .user-role { font-size: 0.7rem; }
+  .menu-logo { height: 32px; }
+  .menu-title { font-size: 1.3rem; }
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1024px) {
+  ion-menu { --width: 230px; }
+  ion-item { font-size: 0.95rem; padding: 11px 15px; }
+  .user-info { padding: 14px 12px; }
+  .user-info .user-name { font-size: 1rem; }
+  .user-info .user-email { font-size: 0.85rem; }
+  .user-info .user-role { font-size: 0.75rem; }
+  .menu-logo { height: 36px; }
+  .menu-title { font-size: 1.45rem; }
+}
+
+/* Desktop */
+@media (min-width: 1025px) and (max-width: 1920px) {
+  ion-menu { --width: 250px; }
+  ion-item { font-size: 1rem; padding: 12px 16px; }
+  .user-info { padding: 16px 14px; }
+  .user-info .user-name { font-size: 1.1rem; }
+  .user-info .user-email { font-size: 0.9rem; }
+  .user-info .user-role { font-size: 0.8rem; }
+  .menu-logo { height: 40px; }
+  .menu-title { font-size: 1.6rem; }
+}
+
+/* Ultra-wide screens */
+@media (min-width: 1921px) {
+  ion-menu { --width: 300px; }
+  ion-item { font-size: 1.1rem; padding: 14px 18px; }
+  .user-info { padding: 18px 16px; }
+  .user-info .user-name { font-size: 1.2rem; }
+  .user-info .user-email { font-size: 1rem; }
+  .user-info .user-role { font-size: 0.9rem; }
+  .menu-logo { height: 44px; }
+  .menu-title { font-size: 1.8rem; }
+}
+.user-clock {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: #FFD700;
+  gap: 6px;
+}
+
+

@@ -1,0 +1,145 @@
+ion-header {
+  --background: #ffffff;
+  --ion-toolbar-background: #ffffff;
+  --ion-text-color: #1a1a1a;
+  transition: background 0.4s ease;
+}
+
+ion-toolbar {
+  --border-width: 0;
+  padding: 0 12px;
+  height: 64px;
+}
+
+ion-title {
+  font-size: clamp(1.2rem, 4vw, 1.6rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #1a1a1a;
+}
+
+.nav-btn {
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --border-radius: 6px;
+  --background: transparent;
+  --background-hover: transparent;
+  --background-focused: transparent;
+  --background-activated: transparent;
+  margin-inline-start: 8px;
+  position: relative;
+}
+
+.nav-btn ion-label {
+  font-size: clamp(0.95rem, 3.5vw, 1.1rem);
+  font-weight: 500;
+  color: inherit;
+}
+
+/* Toggle indicator: subtle dot below text */
+.toggle-indicator {
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 3px;
+  background: #2196f3; /* primary color */
+  border-radius: 2px;
+  opacity: 0.9;
+}
+
+/* Active button: slight text emphasis + indicator */
+.nav-btn[color="primary"] ion-label {
+  color: #1565c0;
+  font-weight: 600;
+}
+
+.nav-btn[color="medium"] ion-label {
+  color: #666666;
+}
+
+/* Optional: subtle background fade-in for route change (splash-like) */
+ion-header.route-changing {
+  animation: fadeBackground 0.5s ease forwards;
+}
+
+@keyframes fadeBackground {
+  0% { background-color: #f0f8ff; } /* very light blue splash */
+  100% { background-color: #ffffff; }
+}
+/* ===== LOGOUT BUTTON ===== */
+.logout-btn {
+  width: 44px;
+  height: 44px;
+  --border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  transition: 0.25s ease;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 217, 0, 0.1);
+}
+
+.logout-icon {
+  width: 36px;
+  height: 36px;
+  filter: brightness(100%);
+}
+/* ================= RESPONSIVE MULTI-DEVICE ================= */
+
+/* Extra Small Phones <360px */
+@media (max-width: 360px) {
+  ion-toolbar { height: 56px; padding: 0 6px; }
+  ion-title { font-size: clamp(1rem, 5vw, 1.2rem); }
+  .nav-btn ion-label { font-size: clamp(0.8rem, 4vw, 0.95rem); }
+  .logout-btn { width: 32px; height: 32px; }
+  .logout-icon { width: 22px; height: 22px; }
+}
+
+/* Small Phones 361px–480px */
+@media (min-width: 361px) and (max-width: 480px) {
+  ion-toolbar { height: 60px; padding: 0 8px; }
+  ion-title { font-size: clamp(1.05rem, 4.5vw, 1.3rem); }
+  .nav-btn ion-label { font-size: clamp(0.85rem, 3.8vw, 1rem); }
+}
+
+/* Medium Phones 481px–640px */
+@media (min-width: 481px) and (max-width: 640px) {
+  ion-toolbar { height: 64px; }
+  ion-title { font-size: clamp(1.1rem, 4vw, 1.4rem); }
+  .nav-btn ion-label { font-size: clamp(0.9rem, 3.5vw, 1.05rem); }
+}
+
+/* Large Phones / Small Tablets 641px–768px */
+@media (min-width: 641px) and (max-width: 768px) {
+  ion-toolbar { height: 68px; }
+  ion-title { font-size: clamp(1.15rem, 3.8vw, 1.45rem); }
+  .nav-btn ion-label { font-size: clamp(0.95rem, 3.2vw, 1.1rem); }
+}
+
+/* Tablets 769px–1024px */
+@media (min-width: 769px) and (max-width: 1024px) {
+  ion-toolbar { height: 72px; padding: 0 12px; }
+  ion-title { font-size: clamp(1.2rem, 3.5vw, 1.5rem); }
+  .nav-btn ion-label { font-size: clamp(1rem, 3vw, 1.15rem); }
+}
+
+/* Laptops / Desktop HD 1025px–1440px */
+@media (min-width: 1025px) and (max-width: 1440px) {
+  ion-toolbar { height: 74px; padding: 0 16px; }
+  ion-title { font-size: clamp(1.3rem, 2.8vw, 1.55rem); }
+  .nav-btn ion-label { font-size: clamp(1.05rem, 2.5vw, 1.2rem); }
+}
+
+/* Desktop HD / 2K 1441px+ */
+@media (min-width: 1441px) {
+  ion-toolbar { height: 80px; padding: 0 20px; }
+  ion-title { font-size: clamp(1.4rem, 2.5vw, 1.6rem); }
+  .nav-btn ion-label { font-size: clamp(1.1rem, 2.2vw, 1.25rem); }
+  .logout-btn { width: 60px; height: 60px; }
+  .logout-icon { width: 44px; height: 44px; }
+}

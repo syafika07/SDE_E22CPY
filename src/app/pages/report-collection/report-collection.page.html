@@ -1,0 +1,132 @@
+<app-loading-progress
+  [show]="loading"
+  [progress]="loadingProgress"
+  [message]="'Loading charts...'"
+  [phase]="'Fetching data'">
+</app-loading-progress>
+
+<ion-content class="dashboard-container">
+  <div class="content-wrapper">
+
+    <!-- ================= HEADER & TOP NAVIGATION ================= -->
+    <header class="dashboard-header">
+      <div class="header-left">
+        <div class="brand-container">
+          <img src="assets/icon/SDE.png" class="custom-logo-img" alt="Logo">
+          <div class="title-group">
+            <h1 class="dashboard-title">Daily Report</h1>
+            <ion-note class="sub-title">
+              By Collection At {{ latestDateMinusOne | date:'mediumDate' }}
+            </ion-note>
+          </div>
+        </div>
+
+        <!-- NAVIGATION BUTTONS -->
+        <div class="view-navigation">
+          <button class="nav-btn" (click)="navigate('REPORT')">
+            <ion-icon [icon]="carOutline"></ion-icon> Traffic
+          </button>
+          <button class="nav-btn active" (click)="navigate('REPORT_COLLECTION')">
+            <ion-icon [icon]="cashOutline"></ion-icon> Collections
+          </button>
+        </div>
+      </div>
+
+      <!-- FILTER TOOLBAR -->
+      <div class="filter-toolbar">
+        <div class="date-inputs">
+          <div class="input-group">
+            <span class="label">Start Date</span>
+            <ion-datetime-button datetime="start-date"></ion-datetime-button>
+            <ion-modal [keepContentsMounted]="true">
+              <ng-template>
+                <ion-datetime id="start-date" presentation="date" [(ngModel)]="startDate"></ion-datetime>
+              </ng-template>
+            </ion-modal>
+          </div>
+          <div class="input-group">
+            <span class="label">End Date</span>
+            <ion-datetime-button datetime="end-date"></ion-datetime-button>
+            <ion-modal [keepContentsMounted]="true">
+              <ng-template>
+                <ion-datetime id="end-date" presentation="date" [(ngModel)]="endDate"></ion-datetime>
+              </ng-template>
+            </ion-modal>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <ion-button (click)="reloadAll()" class="btn-primary" fill="solid">Apply Filters</ion-button>
+          <ion-button color="medium" fill="clear" (click)="resetFilter()" class="btn-reset">Reset</ion-button>
+        </div>
+      </div>
+    </header>
+
+    <div class="scorecard-row">
+      <div class="kpi-card">
+        <div class="kpi-content">
+          <span class="kpi-label">Total Traffic (Veh)</span>
+          <div class="kpi-value">{{ totalTraffic | number }}</div>
+        </div>
+        <div class="kpi-icon-bg">
+          <ion-icon [icon]="carSportSharp"></ion-icon>
+        </div>
+      </div>
+
+      <div class="kpi-card primary-gradient">
+        <div class="kpi-content">
+          <span class="kpi-label">Total Collection</span>
+          <div class="kpi-value">{{ totalPaidAmount | currency:'RM':'symbol':'1.2-2' }}</div>
+        </div>
+        <div class="kpi-icon-bg light">
+          <ion-icon [icon]="cashSharp"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= CHART GRID (2x2) ================= -->
+    <div class="chart-main-grid">
+
+      <!-- Card 1 -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3 class="chart-title">Total Collection by Plaza (%)</h3>
+        </div>
+        <div class="chart-body">
+          <canvas #trxDonutChart id="trxDonutChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3 class="chart-title">Total Collection by Payment Mode (RM)</h3>
+        </div>
+        <div class="chart-body">
+          <canvas #paymentModeChart id="paymentModeChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3 class="chart-title">Total Collection by Plaza (RM)</h3>
+        </div>
+        <div class="chart-body">
+          <canvas #plazaBarChart id="plazaBarChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3 class="chart-title">Total Collection by Transaction Class (RM)</h3>
+        </div>
+        <div class="chart-body">
+          <canvas #trxClassBarChart id="trxClassBarChart"></canvas>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</ion-content>

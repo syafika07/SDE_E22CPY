@@ -1,0 +1,389 @@
+<app-header></app-header>
+
+<ion-content fullscreen class="ion-padding background">
+  <!-- 🔹 Loading Spinner + Progress Bar -->
+  <app-loading-progress
+    [show]="loading || isDownloadingPDF"
+    [progress]="progress"
+    [message]="loading ? 'Loading analytics...' : 'Generating PDF...'">
+  </app-loading-progress>
+
+<!-- 🔹 FILTERS SECTION -->
+<div class="filter-container">
+
+  <!-- Calendar Card -->
+  <ion-card class="calendar-card">
+    <ion-card-header>
+      <ion-card-title>Select Date</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+<ion-datetime
+  [(ngModel)]="selectedDate"
+  presentation="date"
+  display-format="YYYY-MM-DD"
+  size="cover">
+</ion-datetime>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Filter Card -->
+<ion-card class="filter-card" *ngIf="selectedDate">
+  <ion-item>
+    <ion-label position="stacked">Plaza</ion-label>
+    <ion-select [(ngModel)]="selectedPlaza" (ionChange)="onPlazaChange()" multiple="true">
+
+      <!-- Placeholder kalau tiada option -->
+      <ion-select-option *ngIf="plazaList.length === 0" disabled>
+        Press Apply first
+      </ion-select-option>
+
+      <!-- Option sebenar -->
+      <ion-select-option *ngFor="let p of plazaList" [value]="p">
+        {{ p }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+
+<ion-item lines="none" *ngIf="!loading">
+  <ion-label class="payment-label">
+    <!-- Header -->
+    <div class="payment-header">
+      <span class="payment-title">Payment Mode</span>
+      <ion-checkbox
+        [disabled]="paymentModeList.length === 0"
+        [checked]="paymentModeList.length > 0 && selectedPaymentModes.length === paymentModeList.length"
+        (ionChange)="toggleSelectAllPaymentModes($event)">
+        Select All
+      </ion-checkbox>
+    </div>
+
+    <!-- Grid checkbox -->
+    <div class="payment-grid">
+      <!-- ✅ Loading state -->
+      <div *ngIf="paymentModeList.length === 0" class="payment-item placeholder">
+        <ion-label>No payment modes</ion-label>
+      </div>
+
+      <!-- ✅ Real options -->
+      <div *ngFor="let pm of paymentModeList" class="payment-item">
+        <ion-checkbox
+          [disabled]="loading"
+          [checked]="selectedPaymentModes.includes(pm)"
+          (ionChange)="togglePaymentMode(pm, $event)">
+          <ion-label>{{ pm || '(No Value)' }}</ion-label>
+        </ion-checkbox>
+      </div>
+    </div>
+  </ion-label>
+</ion-item>
+
+<!-- ✅ Loading placeholder (optional tapi digalakkan) -->
+<ion-item lines="none" *ngIf="loading">
+  <ion-label class="payment-label">
+    <div class="payment-header">
+      <span class="payment-title">Payment Mode</span>
+      <ion-skeleton-text animated style="width: 100px; height: 20px;"></ion-skeleton-text>
+    </div>
+    <div class="payment-grid">
+      <div class="payment-item" *ngFor="let i of [1,2,3]">
+        <ion-skeleton-text animated style="width: 100%; height: 24px;"></ion-skeleton-text>
+      </div>
+    </div>
+  </ion-label>
+</ion-item>
+  <!-- 🔹 Butang Apply & Download PDF dalam satu baris -->
+  <div class="button-row">
+<ion-button class="apply" (click)="applyFilter()">
+  <img src="assets/apply.png" alt="Apply" class="btn-icon" />
+  Apply Filter
+</ion-button>
+
+<ion-button
+  class="dwn"
+  (click)="downloadReport()"
+  [disabled]="isDownloadingPDF">
+  <ion-icon name="download-outline" slot="start"></ion-icon>
+    <img src="assets/pdf.png" alt="PDF" class="btn-icon-right" />
+  {{ isDownloadingPDF ? 'Generating PDF...' : 'Download PDF' }}
+</ion-button>
+
+  </div>
+</ion-card>
+
+
+
+
+</div>
+
+
+  <!-- 🔹 SUMMARY CARDS -->
+  <div class="stats-grid">
+    <ion-card class="stat-card"><ion-card-content><h2>{{ totalTransactions || 0 }}</h2><p>Transactions</p></ion-card-content></ion-card>
+    <ion-card class="stat-card"><ion-card-content><h2>{{ totalPlazas || 0 }}</h2><p>Active Plazas</p></ion-card-content></ion-card>
+    <ion-card class="stat-card"><ion-card-content><h2>{{ totalPaid | currency:'RM' }}</h2><p>Total Paid</p></ion-card-content></ion-card>
+  </div>
+
+ <!-- CHARTS ROW 1 -->
+<div class="dashboard-row">
+  <ion-card class="chart-card" id="chart-card-1">
+    <ion-card-header>
+      <ion-card-title>Entry Plaza (Total)</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="chart-wrapper">
+        <canvas id="barChart1"></canvas>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card class="chart-card" id="chart-card-2">
+    <ion-card-header>
+      <ion-card-title>Class (Total)</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="chart-wrapper">
+        <canvas id="barChart2"></canvas>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</div>
+
+<!-- CHARTS ROW 2 -->
+<div class="dashboard-row">
+  <ion-card class="chart-card" id="chart-card-3">
+    <ion-card-header>
+      <ion-card-title>Total Paid Amount (Plaza No)</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="chart-wrapper">
+        <canvas id="donutChart"></canvas>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card class="table-card">
+    <ion-card-header>
+      <ion-card-title>Entry Plaza Summary</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <table class="data-table">
+        <thead>
+          <tr><th>Entry Plaza</th><th>Total</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let s of summaryData">
+            <td>{{ s.EntryPlaza }}</td>
+            <td>{{ s.total }}</td>
+          </tr>
+          <tr *ngIf="!summaryData.length">
+            <td colspan="2" class="no-data">No data</td>
+          </tr>
+        </tbody>
+      </table>
+    </ion-card-content>
+  </ion-card>
+</div>
+
+<ion-card class="table-card-special">
+  <ion-card-header>
+  <ion-card-title>{{ trafficRevenueTitle }}</ion-card-title>
+  </ion-card-header>
+
+  <ion-card-content>
+    <div style="overflow-x: auto;">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th rowspan="2">Class</th>
+
+            <!-- Header untuk setiap Entry Plaza -->
+            <th *ngFor="let plaza of dynamicEntryPlazas" colspan="2">
+              {{ plaza }}
+            </th>
+
+            <th rowspan="2">Total Traffic</th>
+            <th rowspan="2">Total Revenue (RM)</th>
+          </tr>
+          <tr>
+            <ng-container *ngFor="let plaza of dynamicEntryPlazas">
+              <th>Traffic</th>
+              <th>Revenue (RM)</th>
+            </ng-container>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let row of dynamicClassPlaza">
+            <td>{{ row.Class }}</td>
+
+            <!-- Data setiap plaza -->
+            <ng-container *ngFor="let plaza of dynamicEntryPlazas">
+              <td>{{ row[plaza + '_Traffic'] || 0 }}</td>
+              <td>RM {{ (row[plaza + '_Paid'] || 0) | number:'1.2-2' }}</td>
+            </ng-container>
+
+            <td>{{ row.TotalTrafficAll || 0 }}</td>
+            <td>RM {{ (row.TotalPaidAll || 0) | number:'1.2-2' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </ion-card-content>
+</ion-card>
+
+
+<ion-card class="table-card">
+  <ion-card-header>
+    <div class="table-header-flex">
+      <!-- Title di kiri -->
+      <ion-card-title>Detailed Transactions</ion-card-title>
+
+      <!-- Dropdown Filters di kanan -->
+      <div class="table-filter-dropdowns">
+
+        <!-- Code Filter -->
+        <ion-item lines="none">
+          <ion-label position="fixed">Class</ion-label>
+          <ion-select [(ngModel)]="selectedTrx" (ionChange)="applyTableFilter()" multiple="true" interface="popover">
+            <ion-select-option *ngFor="let c of trxList" [value]="c">{{ c }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <!-- Penalty Filter -->
+        <ion-item lines="none">
+          <ion-label position="fixed">Penalty</ion-label>
+          <ion-select [(ngModel)]="selectedPenalties" (ionChange)="applyTableFilter()" multiple="true" interface="popover">
+            <ion-select-option *ngFor="let p of penaltyList" [value]="p">{{ p }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <!-- Remark Filter -->
+        <ion-item lines="none">
+          <ion-label position="fixed">Remark</ion-label>
+          <ion-select [(ngModel)]="selectedRemarks" (ionChange)="applyTableFilter()" multiple="true" interface="popover">
+            <ion-select-option *ngFor="let r of remarkList" [value]="r">{{ r }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+      </div>
+    </div>
+  </ion-card-header>
+
+<ion-card-content class="table-scroll">
+<table class="data-table">
+  <thead>
+    <tr>
+      <th style="display:none">ID</th>
+      <th>Trx No</th>
+      <th>Entry Plaza</th>
+      <th>Plaza No</th>
+      <th>Class</th>
+      <th>Lane</th>
+      <th>Payment</th>
+      <th>Date</th>
+      <th>Mfg No / Tag ID</th>
+      <th>Card No</th>
+      <th>Vehicle</th>
+      <th>Paid Amount</th>
+      <th>Origin Plaza</th>
+      <th>Penalty</th>
+      <th>Code</th>
+      <th>Remark</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let row of filteredSubTable; trackBy: trackByRow">
+      <td style="display:none">{{ row.id }}</td>
+      <td>{{ row.TrxNo }}</td>
+
+      <td>
+        <ng-container *ngIf="isRowEditable(row); else displayPlaza">
+          <ion-select [(ngModel)]="row.EntryPlaza" placeholder="{{ row.EntryPlaza }}" (ionChange)="onEntryPlazaChange(row)">
+            <ion-select-option [value]="null">NULL</ion-select-option>
+            <ion-select-option *ngFor="let plaza of getAvailablePlazas(row.EntryPlaza)" [value]="plaza">
+              {{ plaza }}
+            </ion-select-option>
+          </ion-select>
+        </ng-container>
+
+        <ng-template #displayPlaza>
+          {{ row.EntryPlaza }}
+        </ng-template>
+      </td>
+      <td>{{ row.PlazaNo }}</td>
+      <td>{{ row.Trx }}</td> <!-- Class -->
+      <td>{{ row.LaneNo }}</td>
+      <td>{{ row.PaymentMode }}</td>
+      <td>{{ row.TransactionDateTime | date:'short' }}</td>
+      <td>{{ row.MfgNoTagID }}</td>
+      <td>{{ row.CardNo }}</td>
+      <td>{{ row.VehicleNo }}</td>
+      <td>{{ row.PaidAmount | number:'1.2-2' }}</td>
+      <td>{{ row.OriginPlaza }}</td>
+      <td>{{ row.PenaltyCode }}</td>
+      <td>{{ row.Code }}</td>
+      <td>{{ row.Remark }}</td>
+    </tr>
+
+    <tr *ngIf="!filteredSubTable.length">
+      <td colspan="16" class="no-data">No transactions</td>
+    </tr>
+  </tbody>
+</table>
+    <!-- Pagination -->
+  </ion-card-content>
+<div class="pagination-footer-right" style="display: flex; align-items: center; gap: 8px;">
+
+      <!-- Reset button -->
+    <ion-button
+      size="small" fill="clear" class="text-button"
+      (click)="resetTableFilters()">
+      Reset
+    </ion-button>
+  <span class="page-info">{{ currentPage }}/{{ totalPages }}</span>
+
+  <ion-button
+    size="small" fill="clear" class="text-button"
+    (click)="prevPage()"
+    [disabled]="currentPage === 1">
+    Prev
+  </ion-button>
+
+  <ion-button
+    size="small" fill="clear" class="text-button"
+    (click)="nextPage()"
+    [disabled]="currentPage === totalPages">
+    Next
+  </ion-button>
+
+<ion-button
+  size="small" fill="clear" class="text-button"
+  (click)="toggleEdit()">
+  {{ isEditing ? 'Cancel' : 'Edit' }}
+</ion-button>
+
+<ion-button
+  size="small"
+  fill="solid"
+  color="primary"
+  [disabled]="!updatedRows.length"
+  (click)="saveChanges()"
+  *ngIf="isEditing">
+
+  <!-- Icon dari assets -->
+  <img src="assets/sv.png" alt="Save" class="btn-icon" />
+
+  <!-- Text button -->
+  Save
+</ion-button>
+</div>
+
+</ion-card>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+</ion-content>

@@ -1,0 +1,69 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Pilih Tarikh & Masa</ion-title>
+    <ion-buttons slot="end">
+      <ion-button
+        fill="clear"
+        (click)="cancel()"
+        style="--padding-start: 8px; --padding-end: 8px; --min-width: 36px; --min-height: 36px;"
+        aria-label="Tutup">
+        <ion-img
+          src="assets/icon/x.png"
+          alt="Tutup"
+          class="header-x-icon">
+        </ion-img>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <ion-item lines="none">
+    <ion-label position="stacked">Tarikh & Masa</ion-label>
+    <ion-datetime
+      presentation="date-time"
+      hour-cycle="h23"
+      [(ngModel)]="currentDateTime"
+      [showDefaultButtons]="false">
+    </ion-datetime>
+  </ion-item>
+
+  <!-- ✅ Button pilih sebelum masuk list -->
+  <ion-button expand="block" (click)="addCurrentDateTime()" style="margin-top: 10px;">
+    Pilih
+  </ion-button>
+
+  @if (selectedDateTimes.length > 0) {
+    <ion-item lines="full" style="--inner-padding-end: 0;">
+      <ion-label>
+        <h3>Tarikh Dipilih ({{ selectedDateTimes.length }})</h3>
+        <div class="chips-container">
+          @for (dt of selectedDateTimes; track dt) {
+            <div class="chip">
+              <span>{{ dt }}</span>
+              <div
+                class="chip-x-wrapper"
+                (click)="removeDateTime(dt); $event.stopPropagation(); $event.preventDefault()"
+                title="Buang">
+                <ion-img
+                  src="assets/icon/x.png"
+                  alt="Buang"
+                  class="chip-x-icon">
+                </ion-img>
+              </div>
+            </div>
+          }
+        </div>
+      </ion-label>
+    </ion-item>
+  }
+
+  <ion-button
+    expand="block"
+    (click)="done()"
+    style="margin-top: 20px;">
+    ✅ Simpan & Tutup
+  </ion-button>
+
+</ion-content>

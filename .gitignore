@@ -1,0 +1,7 @@
+node_modules/
+www/*
+!www/_redirects
+.DS_Store
+*.csv
+*.xlsx
+*.xls
