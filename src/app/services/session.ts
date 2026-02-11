@@ -44,7 +44,7 @@ export class SessionService implements OnDestroy {
         const cleanUrl = event.url.replace(/^\//, '');
 
         // 🚫 KECUALI LOGIN & TV DISPLAY
-        if (cleanUrl === ROUTES.LOGIN || cleanUrl === ROUTES.TV_DISPLAY) {
+        if (cleanUrl === ROUTES.LOGIN || cleanUrl === ROUTES.TV_DISPLAY || cleanUrl === ROUTES.REPORT || cleanUrl === ROUTES.REPORT_COLLECTION) {
           this.pauseTimer();
         } else if (this.isLoggedIn()) {
           this.resumeTimer();
@@ -172,7 +172,7 @@ export class SessionService implements OnDestroy {
 
     // 🚫 JANGAN logout / warning di TV DISPLAY
     const currentUrl = this.router.url.replace(/^\//, '');
-      if (currentUrl === ROUTES.TV_DISPLAY || currentUrl === ROUTES.LOGIN) {
+      if (currentUrl === ROUTES.TV_DISPLAY || currentUrl === ROUTES.LOGIN || currentUrl === ROUTES.REPORT || currentUrl === ROUTES.REPORT_COLLECTION) {
       this.pauseTimer();
       return;
     }

@@ -67,7 +67,7 @@ export class SideMenuComponent implements OnInit, OnDestroy {
     user: 'Operator'
   };
   canSwipe: boolean = true; // default true
-  excludedRoutes = [ROUTES.LOGIN, ROUTES.RESET_PASS, ROUTES.CHANGES]; // routes tak nak swipe
+  excludedRoutes = [ROUTES.LOGIN, ROUTES.RESET_PASS, ROUTES.CHANGES, ROUTES.REPORT, ROUTES.REPORT_COLLECTION]; // routes tak nak swipe
 
 
 menuItems: MenuItem[] = [
