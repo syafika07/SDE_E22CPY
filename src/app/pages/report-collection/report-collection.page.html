@@ -34,30 +34,8 @@
 
       <!-- FILTER TOOLBAR -->
       <div class="filter-toolbar">
-        <div class="date-inputs">
-          <div class="input-group">
-            <span class="label">Start Date</span>
-            <ion-datetime-button datetime="start-date"></ion-datetime-button>
-            <ion-modal [keepContentsMounted]="true">
-              <ng-template>
-                <ion-datetime id="start-date" presentation="date" [(ngModel)]="startDate"></ion-datetime>
-              </ng-template>
-            </ion-modal>
-          </div>
-          <div class="input-group">
-            <span class="label">End Date</span>
-            <ion-datetime-button datetime="end-date"></ion-datetime-button>
-            <ion-modal [keepContentsMounted]="true">
-              <ng-template>
-                <ion-datetime id="end-date" presentation="date" [(ngModel)]="endDate"></ion-datetime>
-              </ng-template>
-            </ion-modal>
-          </div>
-        </div>
-
-        <div class="action-buttons">
-          <ion-button (click)="reloadAll()" class="btn-primary" fill="solid">Apply Filters</ion-button>
-          <ion-button color="medium" fill="clear" (click)="resetFilter()" class="btn-reset">Reset</ion-button>
+          <div class="action-buttons">
+            <ion-button (click)="reloadAll()" class="btn-primary" fill="solid">Reload Data</ion-button>
         </div>
       </div>
     </header>

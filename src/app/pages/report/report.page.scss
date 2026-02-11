@@ -180,8 +180,8 @@
   .action-buttons {
     display: flex;
     gap: 12px;
-    padding-left: 24px;
-    border-left: 1px solid var(--border-light);
+    padding-left: 8px;
+    //border-left: 1px solid var(--border-light);
 
     @media (max-width: 768px) {
       padding-left: 0;

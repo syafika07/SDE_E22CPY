@@ -132,7 +132,7 @@ ionViewDidEnter() {
 ionViewWillLeave() {
 }
 
-
+/*
 ngOnInit() {
   const today = new Date();
   const firstLastMonth = new Date(
@@ -148,6 +148,21 @@ ngOnInit() {
   const yesterday = new Date(today);
   yesterday.setDate(today.getDate() - 1);
   this.latestDateMinusOne = this.datePipe.transform(yesterday, 'yyyy-MM-dd')!;
+}
+  */
+ ngOnInit() {
+  const today = new Date();
+
+  // Start date = 1st day of current month
+  const firstDayCurrentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  this.startDate = this.datePipe.transform(firstDayCurrentMonth, 'yyyy-MM-dd')!;
+
+  // End date = yesterday
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+  this.endDate = this.datePipe.transform(yesterday, 'yyyy-MM-dd')!;
+
+  this.latestDateMinusOne = this.endDate; // latest date minus 1
 }
   // ================== PARAM BUILDER ==================
 
