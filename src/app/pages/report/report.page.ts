@@ -13,6 +13,8 @@ import { carOutline,cashOutline,trendingUpOutline,carSharp,carSportSharp,cashSha
 import { ROUTES } from '../../routes-map';
 import { Router } from '@angular/router';
 import { ViewChild, ElementRef } from '@angular/core';
+import { SessionService } from 'src/app/services/session';
+import { HeaderComponent } from 'src/app/components/header/header.component';
 
 
 
@@ -26,7 +28,7 @@ Chart.register(...registerables, ChartDataLabels);
   imports: [
     CommonModule, FormsModule,
     IonContent, IonButton, IonIcon, IonNote,
-    LoadingProgressComponent
+    LoadingProgressComponent,HeaderComponent
 ],
   providers: [DatePipe]
 })
@@ -101,7 +103,7 @@ export class ReportPage implements OnInit {
   };
   totalSegment: number=0;
 
-  constructor(private http: HttpClient, private datePipe: DatePipe, private router: Router) {}
+  constructor(private http: HttpClient, private datePipe: DatePipe, private router: Router,public session: SessionService) {}
 
 navigate(routeKey: keyof typeof ROUTES) {
   this.destroyAllCharts();
@@ -660,6 +662,15 @@ fakeProgress(): Promise<void> {
 getProgressWidth(value: number | undefined): number {
   if (!value) return 10;
   return Math.min(value / 100, 100);
+}
+
+shouldShowReportHeader(): boolean {
+  const currentUrl = this.router.url.split('?')[0];
+  return this.session.isLoggedIn() &&
+         currentUrl.startsWith(`/${ROUTES.REPORT}`);
+}
+get isAuthenticated(): boolean {
+  return this.session.isAuthenticated();
 }
 
 }

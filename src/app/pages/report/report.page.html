@@ -1,5 +1,8 @@
-<app-loading-progress [show]="loading" [progress]="loadingProgress" [message]="'Loading charts...'" [phase]="'Fetching data'"> </app-loading-progress>
+<app-header *ngIf="isAuthenticated"></app-header>
+
 <ion-content class="dashboard-container dark-theme">
+<app-loading-progress [show]="loading" [progress]="loadingProgress" [message]="'Loading charts...'" [phase]="'Fetching data'"> </app-loading-progress>
+
   <div class="content-wrapper">
 
     <!-- ================= HEADER SECTION ================= -->

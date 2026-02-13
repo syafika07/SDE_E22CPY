@@ -71,7 +71,9 @@ export class SideMenuComponent implements OnInit, OnDestroy {
 
 
 menuItems: MenuItem[] = [
-  { title: 'Summary Report', icon: 'home-outline', url: ROUTES.DASHBOARD, roles: ['admin', 'proadmin', 'user'] },
+  //{ title: 'Summary Report', icon: 'home-outline', url: ROUTES.DASHBOARD, roles: ['admin', 'proadmin', 'user'] },
+  { title: 'Daily Report (Veh)', icon: 'document-text-outline', url: ROUTES.REPORT,roles: ['user','admin', 'proadmin']},
+  { title: 'Daily Report (RM)', icon: 'document-text-outline', url: ROUTES.REPORT_COLLECTION,roles: ['user','admin', 'proadmin']},
   { title: 'TNG Data', icon: 'cloud-upload-outline', url: ROUTES.TNG, roles: ['proadmin'] },
   { title: 'Dashboard', icon: 'cloud-upload-outline', url: ROUTES.TNGC, roles: ['admin', 'proadmin'] },
   { title: 'Upload Data', icon: 'cloud-upload-outline', url: ROUTES.UPLOAD_DATA, roles: ['user','admin', 'proadmin'] },

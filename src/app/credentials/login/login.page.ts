@@ -105,7 +105,7 @@ export class LoginPage {
       if (role === 'editor') {
         await this.router.navigateByUrl(ROUTES.ADD_INFO);
       } else {
-        await this.router.navigateByUrl(ROUTES.DASHBOARD);
+        await this.router.navigateByUrl(ROUTES.UPLOAD_DATA);
       }
     } catch (err: any) {
       this.logger.error('Login error:', err);

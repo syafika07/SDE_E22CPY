@@ -14,6 +14,8 @@ import { ROUTES } from '../../routes-map';
 import { Router } from '@angular/router';
 
 import { ViewChild, ElementRef } from '@angular/core';
+import { SessionService } from 'src/app/services/session';
+import { HeaderComponent } from 'src/app/components/header/header.component';
 
 
 Chart.register(...registerables, ChartDataLabels);
@@ -26,7 +28,8 @@ Chart.register(...registerables, ChartDataLabels);
   imports: [IonIcon, IonNote,
     CommonModule, FormsModule,
     IonContent, IonButton,
-    LoadingProgressComponent],
+    LoadingProgressComponent, HeaderComponent
+  ],
   providers: [DatePipe]
 })
 export class ReportCollectionPage implements OnInit {
@@ -88,7 +91,8 @@ export class ReportCollectionPage implements OnInit {
   constructor(
     private http: HttpClient,
     private datePipe: DatePipe,
-    private router: Router
+    private router: Router,
+    private session: SessionService
   ) {}
 
 navigate(routeKey: keyof typeof ROUTES) {
@@ -601,5 +605,13 @@ renderPaymentDonut(labels: string[], data: number[]) {
 
     this.reloadAll();
   }
+get isAuthenticated(): boolean {
+  return this.session.isAuthenticated();
+}
 
+shouldShowReportHeader(): boolean {
+  const currentUrl = this.router.url.split('?')[0];
+  return this.session.isLoggedIn() &&
+         currentUrl.startsWith(`/${ROUTES.REPORT_COLLECTION}`);
+}
 }

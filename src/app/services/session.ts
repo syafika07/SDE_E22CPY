@@ -100,12 +100,51 @@ export class SessionService implements OnDestroy {
     }, 0);
   }
 
-  isLoggedIn(): boolean {
-    return !!this.user;
-  }
+  isAuthenticated(): boolean {
+  return !!this.user;
+}
 
-  getUser() { return this.user; }
-  getRole() { return this.role; }
+
+isLoggedIn(): boolean {
+  const currentUrl = this.router.url;
+
+  // ✅ Check jika URL mengandungi report routes
+  const isReportRoute =
+    currentUrl.includes(ROUTES.REPORT) ||
+    currentUrl.includes(ROUTES.REPORT_COLLECTION);
+
+  if (isReportRoute) return true;
+  return !!this.user;
+}
+
+getUser() {
+  const currentUrl = this.router.url;
+
+  // ✅ Check jika URL mengandungi report routes
+  const isReportRoute =
+    currentUrl.includes(ROUTES.REPORT) ||
+    currentUrl.includes(ROUTES.REPORT_COLLECTION);
+
+  if (isReportRoute && !this.user) {
+    return { id: 'guest', email: '', role: 'guest' };
+  }
+  return this.user;
+}
+
+getRole() {
+  const currentUrl = this.router.url;
+
+  // ✅ Check jika URL mengandungi report routes
+  const isReportRoute =
+    currentUrl.includes(ROUTES.REPORT) ||
+    currentUrl.includes(ROUTES.REPORT_COLLECTION);
+
+  if (isReportRoute && !this.role) {
+    return 'guest';
+  }
+  return this.role;
+}
+
   hasRole(role: string) { return this.role === role; }
 
   pauseTimer() {
@@ -201,4 +240,14 @@ export class SessionService implements OnDestroy {
       }
     }, this.WARNING_LIMIT);
   }
+
+  isReportRoute(): boolean {
+    return this.router.url.includes(ROUTES.REPORT);
+  }
+
+shouldShowReportHeader(): boolean {
+  // Header hanya muncul jika user benar-benar logged in (bukan guest)
+  return this.isAuthenticated() && this.isReportRoute();
+}
+
 }

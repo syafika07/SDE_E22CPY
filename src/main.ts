@@ -18,7 +18,7 @@ bootstrapApplication(AppComponent, {
     importProvidersFrom(
       LoggerModule.forRoot({
         level: NgxLoggerLevel.DEBUG,
-        disableConsoleLogging: true,
+        disableConsoleLogging: false,
       })
     ),
   ],

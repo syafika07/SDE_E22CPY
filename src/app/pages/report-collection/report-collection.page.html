@@ -1,3 +1,8 @@
+
+<app-header *ngIf="isAuthenticated"></app-header>
+
+<ion-content class="dashboard-container">
+
 <app-loading-progress
   [show]="loading"
   [progress]="loadingProgress"
@@ -5,7 +10,8 @@
   [phase]="'Fetching data'">
 </app-loading-progress>
 
-<ion-content class="dashboard-container">
+
+
   <div class="content-wrapper">
 
     <!-- ================= HEADER & TOP NAVIGATION ================= -->

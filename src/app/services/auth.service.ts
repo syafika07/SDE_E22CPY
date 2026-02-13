@@ -41,7 +41,7 @@ export class AuthService {
       this.sessionService.startSession(user, profile.role);
 
       // Navigate ke dashboard (pakai obfuscated route)
-      await this.router.navigateByUrl(ROUTES.DASHBOARD, { replaceUrl: true });
+      await this.router.navigateByUrl(ROUTES.UPLOAD_DATA, { replaceUrl: true });
 
     } catch (err: any) {
       this.logger.error('AuthService login error:', err);

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Subscription, interval } from 'rxjs';
 import { SupabaseService } from '../../services/supabase.service';
 import { NGXLogger } from 'ngx-logger';
+import { SessionService } from 'src/app/services/session';
 
 import {
   IonHeader,
@@ -29,7 +30,8 @@ interface HeaderButton {
     IonToolbar,
     IonMenuButton,
     IonButtons,
-    IonButton
+    IonButton,
+
 ],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
@@ -53,7 +55,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   // Full route → title mapping
   routeTitleMap: Record<string, string> = {
-    [ROUTES.DASHBOARD]: 'Summary Report',
+    //[ROUTES.DASHBOARD]: 'Summary Report',
+    [ROUTES.REPORT]: 'Daily Report',
     [ROUTES.TNG]: 'TNG',
     [ROUTES.TNGC]: 'Dashboard',
     [ROUTES.UPLOAD_DATA]: 'Upload Data',
@@ -67,7 +70,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private supabaseService: SupabaseService,
     private router: Router,
     private logger: NGXLogger,
-    private activeRouteService: ActiveRouteService
+    private activeRouteService: ActiveRouteService,
+    private session: SessionService
 
   ) {}
 
@@ -87,7 +91,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     // Define header buttons
     this.headerButtons = [
-      { title: 'Summary', routerLink: ROUTES.DASHBOARD, roles: ['admin','proadmin','user'] },
+      //{ title: 'Summary', routerLink: ROUTES.DASHBOARD, roles: ['admin','proadmin','user'] },
+      { title: 'Daily Report', routerLink: ROUTES.REPORT},
       { title: 'Dashboard', routerLink: ROUTES.TNGC, roles: ['admin','proadmin'] },
       { title: 'Upload Data', routerLink: ROUTES.UPLOAD_DATA, roles: ['user','admin','proadmin'] },
     ];
@@ -156,5 +161,9 @@ get formattedUserName(): string {
     .join(' ');
 }
 
+get showHeader(): boolean {
+  // Guna isAuthenticated() bukan isLoggedIn()
+  return this.session.isAuthenticated();
+}
 
 }

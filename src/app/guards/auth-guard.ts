@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router, ActivatedRouteSnapshot } from '@angular/router';
+import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { SupabaseService } from '../services/supabase.service';
 import { SessionService } from '../services/session';
 import { NGXLogger } from 'ngx-logger';
@@ -19,7 +19,19 @@ export class AuthGuard implements CanActivate {
     private logger: NGXLogger
   ) {}
 
-  async canActivate(route: ActivatedRouteSnapshot): Promise<boolean> {
+  async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
+    const url = state.url.split('?')[0];
+    const REPORT_PREFIXES = [
+      '/report',           // semua /report/*
+      '/report-collection'  // semua /report-collection/*
+    ];
+
+    if (REPORT_PREFIXES.some(prefix => url.startsWith(prefix))) {
+      return true;
+    }
+
+
+
     try {
       // 1️⃣ Cek sessionService dulu
       if (this.sessionService.isLoggedIn()) {
@@ -33,7 +45,7 @@ export class AuthGuard implements CanActivate {
       // 3️⃣ Ambil user dari Supabase
       const user = await this.supabaseService.getUser();
       if (!user) {
-      this.router.navigateByUrl(ROUTES.LOGIN, { replaceUrl: true });
+        this.router.navigateByUrl(ROUTES.LOGIN, { replaceUrl: true });
         return false;
       }
 
@@ -42,7 +54,7 @@ export class AuthGuard implements CanActivate {
       if (!profile) {
         profile = await this.supabaseService.createProfile(user.id, user.email ?? '', 'user');
         if (!profile) {
-      this.router.navigateByUrl(ROUTES.LOGIN, { replaceUrl: true });
+          this.router.navigateByUrl(ROUTES.LOGIN, { replaceUrl: true });
           return false;
         }
       }
