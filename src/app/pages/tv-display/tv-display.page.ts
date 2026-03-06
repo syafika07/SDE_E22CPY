@@ -705,7 +705,7 @@ toggleFullscreen() {
   if (this.isTransitioning) return;
   this.isTransitioning = true;
 
-  // Update currentDayIndex
+  // update current index
   if (direction === 'prev') {
     this.currentDayIndex = (this.currentDayIndex - 1 + this.days.length) % this.days.length;
   } else {

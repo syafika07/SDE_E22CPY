@@ -272,7 +272,7 @@ async uploadAll() {
 
       const csvObs = this.http.post<UploadCsvResponse>(
 
-        'https://sde22-1.onrender.com/upload',
+        'https://bkend-uim4.onrender.com/upload',
         //'http://localhost:8000/upload',
 
         formDataCsv,
@@ -311,10 +311,10 @@ async uploadAll() {
       const pdfUrl =
         this.pdfType === 'entry'
          //?'http://localhost:8000/entry-pdf'
-          ?'https://sde22-1.onrender.com/entry-pdf'
+          ?'https://bkend-uim4.onrender.com/entry-pdf'
 
           //:'http://localhost:8000/upload-pdf';
-          :'https://sde22-1.onrender.com/upload-pdf';
+          :'https://bkend-uim4.onrender.com/upload-pdf';
 
       const pdfObs = this.http.post<UploadPdfResponse>(
 
@@ -372,7 +372,7 @@ async uploadAll() {
     this.progress = 100;
     this.loadingMessage = 'Refreshing data...';
 
-    await this.http.post('https://sde22-1.onrender.com/refresh-payment-summary', {}).toPromise();
+    await this.http.post('https://bkend-uim4.onrender.com/refresh-payment-summary', {}).toPromise();
 
     const message = `
     Upload Data Successfully!
@@ -475,7 +475,7 @@ async loadUploadedDates() {
 
   try {
     // 🔹 Step 0: Refresh materialized views
-    //await this.http .post('https://sde22-1.onrender.com/refresh-payment-summary', {}) .toPromise();
+    //await this.http .post('https://bkend-uim4.onrender.com/refresh-payment-summary', {}) .toPromise();
 
     const threeMonthsAgo = new Date();
     threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);

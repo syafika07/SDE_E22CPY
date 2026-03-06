@@ -208,7 +208,7 @@ async reloadAll() {
   loadSummary(): Promise<void> {
     return new Promise(resolve => {
       //this.http.get<any>('http://localhost:8000/summary', { params: this.buildParams() })
-      this.http.get<any>('https://sde22-1.onrender.com/summary', { params: this.buildParams() })
+      this.http.get<any>('https://bkend-uim4.onrender.com/summary', { params: this.buildParams() })
         .subscribe(res => {
           if (res.status === 'success') {
             this.totalTraffic = res.totalTraffic;
@@ -225,7 +225,7 @@ async reloadAll() {
     return new Promise(resolve => {
 
       //this.http.get<any>('http://localhost:8000/payment-per-plaza', {params: this.buildParams() })
-      this.http.get<any>('https://sde22-1.onrender.com/payment-per-plaza', {params: this.buildParams() })
+      this.http.get<any>('https://bkend-uim4.onrender.com/payment-per-plaza', {params: this.buildParams() })
         .subscribe(res => {
 
           if (res.status === 'success') {
@@ -300,7 +300,7 @@ renderPlazaDonut(labels: string[], data: number[]) {
     return new Promise(resolve => {
 
       //this.http.get<any>('http://localhost:8000/payment-by-payment-mode', {params: this.buildParams()})
-      this.http.get<any>('https://sde22-1.onrender.com/payment-by-payment-mode', {params: this.buildParams()})
+      this.http.get<any>('https://bkend-uim4.onrender.com/payment-by-payment-mode', {params: this.buildParams()})
         .subscribe(res => {
 
           if (res.status === 'success') {
@@ -372,7 +372,7 @@ renderPaymentDonut(labels: string[], data: number[]) {
     return new Promise(resolve => {
 
       //this.http.get<any>('http://localhost:8000/payment-by-plaza-bar', {params: this.buildParams() })
-      this.http.get<any>('https://sde22-1.onrender.com/payment-by-plaza-bar', {params: this.buildParams() })
+      this.http.get<any>('https://bkend-uim4.onrender.com/payment-by-plaza-bar', {params: this.buildParams() })
         .subscribe(res => {
 
           if (res.status === 'success') {
@@ -476,7 +476,7 @@ renderPaymentDonut(labels: string[], data: number[]) {
     return new Promise(resolve => {
 
       //this.http.get<any>('http://localhost:8000/payment-by-class', {params: this.buildParams()})
-      this.http.get<any>('https://sde22-1.onrender.com/payment-by-class', {params: this.buildParams()})
+      this.http.get<any>('https://bkend-uim4.onrender.com/payment-by-class', {params: this.buildParams()})
         .subscribe(res => {
 
           if (res.status === 'success') {

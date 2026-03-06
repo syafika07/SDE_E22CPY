@@ -210,7 +210,7 @@ export class TngPage implements OnInit {
   donutChart: any;
   barChart2: any;
 
-  private apiUrl = 'https://sde22-1.onrender.com/wtng';
+  private apiUrl = 'https://bkend-uim4.onrender.com/wtng';
   selectedDate: string = '';
 
   constructor(
