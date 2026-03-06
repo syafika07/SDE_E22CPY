@@ -502,7 +502,7 @@ def get_traffic_summary(
     plazas: str = Query(None, description="Senarai EntryPlaza dipisah koma")
 ):
     try:
-        start_dt, end_dt = parse_date_range(start_date, end_date, filter_6am=False)
+        start_dt, end_dt = parse_date_ranges(start_date, end_date, filter_6am=False)
 
         query = """
             SELECT
