@@ -212,8 +212,8 @@ originalSelectedDate: string = ''; // simpan tarikh asal
   donutChart: any;
   barChart2: any;
 
-  //private apiUrl = 'https://bkend-uim4.onrender.com/wtng';
-  private apiUrl = 'http://localhost:8000/wtng';
+  private apiUrl = 'https://bkend-uim4.onrender.com/wtng';
+  //private apiUrl = 'http://localhost:8000/wtng';
 
 private _selectedDate: string = '';
 
